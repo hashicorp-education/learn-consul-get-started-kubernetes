@@ -25,15 +25,20 @@
 
 ## 04 - Observability with Consul on Kubernetes
 
+**to start here, first do this**
+- kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.3.0"
+- kubectl create namespace consul
+
+**otherwise, if you're doing them all in order**
 - helm upgrade --values helm/consul-v3.yaml consul hashicorp/consul --namespace consul --version "0.46.1"
 - kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.yaml
-- ###wait 15 seconds
+*wait 15 seconds*
 - kubectl create namespace observability
 - kubectl create -f https://github.com/jaegertracing/jaeger-operator/releases/download/v1.36.0/jaeger-operator.yaml -n observability
-- ###wait 20 seconds
+*wait 20 seconds*
 - kubectl apply -f helm/jaeger-allinone.yaml
 - helm install --values helm/prometheus-stack.yaml prometheus prometheus-community/prometheus --version "15.5.3"
-- ###wait 15 seconds
+*wait 15 seconds*
 - helm install --values helm/grafana.yaml grafana grafana/grafana --version "6.23.1"
 - kubectl apply -f proxy-defaults-grpc.yaml 
 - kubectl apply -f hashicups/v3/
