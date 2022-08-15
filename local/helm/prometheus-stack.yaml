@@ -5,7 +5,6 @@ global:
 server:
   podAnnotations:
     "consul.hashicorp.com/connect-inject": "false"
-    #"sidecar.opentelemetry.io/inject": "true"
   readinessProbeInitialDelay: 0
   securityContext:
     runAsUser: 65534
@@ -18,15 +17,12 @@ alertmanager:
 nodeExporter:
   podAnnotations:
     "consul.hashicorp.com/connect-inject": "false"
-    #"sidecar.opentelemetry.io/inject": "true"
 pushgateway:
   podAnnotations:
     "consul.hashicorp.com/connect-inject": "false"
-    #"sidecar.opentelemetry.io/inject": "true"
 kube-state-metrics:
   podAnnotations:
     "consul.hashicorp.com/connect-inject": "false"
-    #"sidecar.opentelemetry.io/inject": "true"
 serviceAccounts:
   alertmanager:
     create: true

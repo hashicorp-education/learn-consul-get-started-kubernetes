@@ -57,22 +57,22 @@ spec:
       serviceAccountName: frontend
       containers:
         - name: frontend
-          image: hashicorpdemoapp/frontend:v1.0.2
-          #image: im2nguyenhashi/frontend-jaeger:latest
+          #image: hashicorpdemoapp/frontend:v1.0.2
+          image: im2nguyenhashi/frontend-jaeger:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:
             - name: NEXT_PUBLIC_PUBLIC_API_URL
               value: "/"
-            #- name: OTEL_SERVICE_NAME
-              #value: "hashicups-frontend"
-            #- name: OTEL_TRACE_HOST
-              #value: "localhost"
-            #- name: OTEL_TRACE_PORT
-              #value: "14268"
-            #- name: NEXT_PUBLIC_FOOTER_FLAG
-              #value: HashiCups
+            - name: OTEL_SERVICE_NAME
+              value: "hashicups-frontend"
+            - name: OTEL_TRACE_HOST
+              value: "simplest-collector.default.svc.cluster.local"
+            - name: OTEL_TRACE_PORT
+              value: "14268"
+            - name: NEXT_PUBLIC_FOOTER_FLAG
+              value: HashiCups
         - name: jaeger-agent
           image: jaegertracing/jaeger-agent:latest
           imagePullPolicy: IfNotPresent
@@ -92,9 +92,9 @@ spec:
           - containerPort: 14271
             name: admin-http
             protocol: TCP
-          #- containerPort: 14268
-            #name: http
-            #protocol: TCP
+          - containerPort: 14268
+            name: http
+            protocol: TCP
           args:
           - --reporter.grpc.host-port=dns:///simplest-collector.default.svc.cluster.local:14250
           - --reporter.type=grpc

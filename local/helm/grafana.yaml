@@ -1,4 +1,4 @@
-adminPassword: password
+adminPassword: admin
 
 rbac:
   create: false
@@ -13,12 +13,10 @@ podLabels:
 
 podAnnotations:
   "consul.hashicorp.com/connect-inject": "false"
-  #"sidecar.opentelemetry.io/inject": "true"
 
 service:
   port: 3000
 
-# Configure the prometheus data source. We expect prometheus:9090 in the same namespace.
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -26,7 +24,7 @@ datasources:
       - name: Prometheus
         type: prometheus
         orgId: 1
-        url: http://prometheus-server.default.svc.cluster.local
+        url: http://prometheus-server.default.svc.cluster.local:80
         access: proxy
         isDefault: true
         jsonData:
