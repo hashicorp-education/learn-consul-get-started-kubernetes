@@ -17,9 +17,9 @@
 
 - kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.3.0"
 - helm upgrade --values helm/consul-v2.yaml consul hashicorp/consul --namespace consul --version "0.46.1"
-- kubectl apply --filename api-gw/v1/consul-api-gateway.yaml --namespace consul && \
+- kubectl apply --filename api-gw/consul-api-gateway.yaml --namespace consul && \
  kubectl wait --for=condition=ready gateway/api-gateway --namespace consul --timeout=90s && \
- kubectl apply --filename api-gw/v1/routes.yaml --namespace consul
+ kubectl apply --filename api-gw/routes.yaml --namespace consul
 - kubectl apply --filename hashicups/v2/
   
 - kubectl port-forward svc/consul-ui --namespace consul 6443:443
@@ -38,7 +38,7 @@ kubectl rollout status deployment jaeger-operator --namespace observability --ti
 kubectl apply -f helm/jaeger-allinone.yaml && \
 kubectl rollout status deployment simplest --namespace default --timeout=90s && \
 helm install --values helm/prometheus-stack.yaml prometheus prometheus-community/prometheus --version "15.5.3" && \
-kubectl rollout status deployment simplest --namespace default --timeout=90s && \
+kubectl rollout status deployment prometheus-server --namespace default --timeout=90s && \
 helm install loki grafana/loki-stack --version "2.6.5"
 kubectl rollout status statefulset loki --namespace default --timeout=90s && \
 helm install --values helm/grafana.yaml grafana grafana/grafana --version "6.23.1"
@@ -48,7 +48,7 @@ echo "Observability Suite Deployment Complete"
 ```
 
 - helm upgrade --values helm/consul-v3.yaml consul hashicorp/consul --namespace consul --version "0.46.1"
-- kubectl apply -f proxy-defaults-grpc.yaml 
+- kubectl apply -f proxy/proxy-defaults-grpc.yaml 
 - kubectl apply -f hashicups/v3/
 
 - kubectl port-forward svc/consul-ui --namespace consul 6443:443
