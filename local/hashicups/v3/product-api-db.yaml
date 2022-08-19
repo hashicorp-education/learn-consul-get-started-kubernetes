@@ -91,7 +91,7 @@ spec:
             name: admin-http
             protocol: TCP
           args:
-          - --reporter.grpc.host-port=dns:///simplest-collector.default.svc.cluster.local:14250
+          - --reporter.grpc.host-port=dns:///jaeger-collector.default.svc.cluster.local:14250
           - --reporter.type=grpc
         - name: postgres-exporter
           image: 'prometheuscommunity/postgres-exporter:v0.11.0'

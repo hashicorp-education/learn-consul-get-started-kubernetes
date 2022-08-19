@@ -68,7 +68,7 @@ spec:
             - name: OTEL_SERVICE_NAME
               value: "hashicups-frontend"
             - name: OTEL_TRACE_HOST
-              value: "simplest-collector.default.svc.cluster.local"
+              value: "jaeger-collector.default.svc.cluster.local"
             - name: OTEL_TRACE_PORT
               value: "14268"
             - name: NEXT_PUBLIC_FOOTER_FLAG
@@ -96,5 +96,5 @@ spec:
             name: http
             protocol: TCP
           args:
-          - --reporter.grpc.host-port=dns:///simplest-collector.default.svc.cluster.local:14250
+          - --reporter.grpc.host-port=dns:///jaeger-collector.default.svc.cluster.local:14250
           - --reporter.type=grpc

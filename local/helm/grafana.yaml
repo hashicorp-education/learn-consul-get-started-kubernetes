@@ -34,7 +34,7 @@ datasources:
         type: jaeger
         uid: jaeger-spectra
         access: proxy
-        url: http://simplest-query.default.svc.cluster.local:16686/
+        url: http://jaeger-query.default.svc.cluster.local:16686/
         editable: true
         isDefault: false
       - name: Loki
