@@ -46,10 +46,7 @@ spec:
         service: product-api-db
         app: product-api-db
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
-        sidecar.opentelemetry.io/inject: "true"
         consul.hashicorp.com/enable-metrics-merging: "true"
         consul.hashicorp.com/service-metrics-port: "9187"
         #consul.hashicorp.com/service-metrics-path: "/metrics"

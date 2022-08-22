@@ -1,4 +1,20 @@
-adminPassword: admin
+env:
+  GF_EXPLORE_ENABLED: true
+  GF_PANELS_DISABLE_SANITIZE_HTML: true
+  GF_LOG_FILTERS: rendering:debug
+  GF_DATE_FORMATS_USE_BROWSER_LOCALE: true
+  GF_DATE_FORMATS_FULL_DATE: "MMM Do, YYYY hh:mm:ss a"
+  GF_DATE_FORMATS_INTERVAL_SECOND: "hh:mm:ss a"
+  GF_DATE_FORMATS_INTERVAL_MINUTE: "hh:mm a"
+  GF_DATE_FORMATS_INTERVAL_HOUR: "DD/MM hh:mm a"
+  GF_DATE_FORMATS_INTERVAL_DAY: "DD/MM"
+  GF_DATE_FORMATS_INTERVAL_MONTH: "MM-YYYY"
+  GF_DATE_FORMATS_INTERVAL_YEAR: "YYYY"
+  GF_AUTH_ANONYMOUS_ENABLED: true
+  GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+  GF_AUTH_DISABLE_LOGIN_FORM: true
+
+#adminPassword: admin
 
 rbac:
   create: false
@@ -26,13 +42,13 @@ datasources:
         orgId: 1
         url: http://prometheus-server.default.svc.cluster.local:80
         access: proxy
-        isDefault: true
+        isDefault: false
         jsonData:
           timeInterval: 5s
         editable: true
       - name: Jaeger
         type: jaeger
-        uid: jaeger-spectra
+        uid: jaeger
         access: proxy
         url: http://jaeger-query.default.svc.cluster.local:16686/
         editable: true
@@ -42,4 +58,10 @@ datasources:
         access: proxy
         url: http://loki.default.svc.cluster.local:3100/
         editable: true
-        isDefault: false
+        isDefault: true
+        jsonData:
+          derivedFields:
+            - datasourceUid: jaeger
+              matcherRegex: (?:traceID|trace_id)=(\w+)
+              name: TraceID
+              url: $${__value.raw}

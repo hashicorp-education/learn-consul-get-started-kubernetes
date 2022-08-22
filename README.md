@@ -33,8 +33,8 @@
 
 - **Add Helm Repositories**
 ```sh
-helm repo add prometheus
-helm repo add grafana
+helm repo add prometheus https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
 ```
 - **Install Observability Suite**

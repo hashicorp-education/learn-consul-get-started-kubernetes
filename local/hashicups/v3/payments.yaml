@@ -45,10 +45,7 @@ spec:
       labels:
         app: payments
       annotations:
-        #prometheus.io/scrape: "true"
-        #prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
-        sidecar.opentelemetry.io/inject: "true"
         consul.hashicorp.com/enable-metrics-merging: "true"
         consul.hashicorp.com/service-metrics-port: "8080"
         consul.hashicorp.com/service-metrics-path: "/actuator/prometheus"

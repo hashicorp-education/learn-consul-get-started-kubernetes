@@ -107,11 +107,8 @@ spec:
         service: nginx
         app: nginx
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "frontend:3000, public-api:8080"
-        sidecar.opentelemetry.io/inject: "true"
         consul.hashicorp.com/enable-metrics-merging: "true"
         consul.hashicorp.com/service-metrics-port: "9113"
         #consul.hashicorp.com/service-metrics-path: "/metrics"
