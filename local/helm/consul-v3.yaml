@@ -46,6 +46,8 @@ connectInject:
     #Enables metrics for Consul Connect sidecars.
   metrics:
     defaultEnabled: true
+    #Enables service metrics and sidecar proxy metrics merging into one endpoint.
+    defaultEnableMerging: true
 #Configures and installs the Consul controller for managing custom resources.
 controller:
   enabled: true

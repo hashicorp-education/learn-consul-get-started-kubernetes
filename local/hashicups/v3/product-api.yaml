@@ -60,9 +60,7 @@ spec:
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "product-api-db:5432"
-        consul.hashicorp.com/enable-metrics-merging: "true"
         consul.hashicorp.com/service-metrics-port: "9103"
-        #consul.hashicorp.com/service-metrics-path: "/metrics"
     spec:
       serviceAccountName: product-api
       volumes:
@@ -94,25 +92,3 @@ spec:
             - name: config
               mountPath: /config
               readOnly: true
-        - name: jaeger-agent
-          image: jaegertracing/jaeger-agent:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 5775
-            name: zk-compact-trft
-            protocol: UDP
-          - containerPort: 5778
-            name: config-rest
-            protocol: TCP
-          - containerPort: 6831
-            name: jg-compact-trft
-            protocol: UDP
-          - containerPort: 6832
-            name: jg-binary-trft
-            protocol: UDP
-          - containerPort: 14271
-            name: admin-http
-            protocol: TCP
-          args:
-          - --reporter.grpc.host-port=dns:///jaeger-collector.default.svc.cluster.local:14250
-          - --reporter.type=grpc

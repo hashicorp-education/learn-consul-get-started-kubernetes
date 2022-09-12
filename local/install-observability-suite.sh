@@ -1,5 +1,5 @@
-helm install --values helm/jaeger.yaml jaeger jaegertracing/jaeger && \
-kubectl rollout status deployment jaeger --namespace default --timeout=90s && \
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
+helm repo add grafana https://grafana.github.io/helm-charts && \
 helm install --values helm/prometheus.yaml prometheus prometheus-community/prometheus --version "15.5.3" && \
 kubectl rollout status deployment prometheus-server --namespace default --timeout=90s && \
 helm install loki grafana/loki-stack --version "2.6.5" && \

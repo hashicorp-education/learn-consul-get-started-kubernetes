@@ -47,15 +47,12 @@ spec:
         app: frontend
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/enable-metrics-merging: "true"
         consul.hashicorp.com/service-metrics-port: "3000"
-        #consul.hashicorp.com/service-metrics-path: "/metrics"
     spec:
       serviceAccountName: frontend
       containers:
         - name: frontend
-          #image: hashicorpdemoapp/frontend:v1.0.2
-          image: im2nguyenhashi/frontend-jaeger:latest
+          image: hashicorpdemoapp/frontend:v1.0.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

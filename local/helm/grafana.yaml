@@ -46,22 +46,9 @@ datasources:
         jsonData:
           timeInterval: 5s
         editable: true
-      - name: Jaeger
-        type: jaeger
-        uid: jaeger
-        access: proxy
-        url: http://jaeger-query.default.svc.cluster.local:16686/
-        editable: true
-        isDefault: false
       - name: Loki
         type: loki
         access: proxy
         url: http://loki.default.svc.cluster.local:3100/
         editable: true
         isDefault: true
-        jsonData:
-          derivedFields:
-            - datasourceUid: jaeger
-              matcherRegex: (?:traceID|trace_id)=(\w+)
-              name: TraceID
-              url: $${__value.raw}

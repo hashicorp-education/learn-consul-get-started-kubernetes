@@ -93,10 +93,10 @@ spec:
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
-  name: traffic-to-frontend
+  name: traffic-to-nginx
 spec:
   destination:
-    name: frontend
+    name: nginx
   sources:
     - name: traffic
       action: allow

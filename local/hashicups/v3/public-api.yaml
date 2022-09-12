@@ -46,14 +46,9 @@ spec:
         service: public-api
         app: public-api
       annotations:
-        #prometheus.io/scrape: "true"
-        #prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "product-api:9090, payments:1800"
-        #sidecar.opentelemetry.io/inject: "true"
-        consul.hashicorp.com/enable-metrics-merging: "true"
         consul.hashicorp.com/service-metrics-port: "9102"
-        #consul.hashicorp.com/service-metrics-path: "/metrics"
     spec:
       serviceAccountName: public-api
       containers:
@@ -69,25 +64,3 @@ spec:
               value: "http://localhost:9090"
             - name: PAYMENT_API_URI
               value: "http://localhost:1800"
-        - name: jaeger-agent
-          image: jaegertracing/jaeger-agent:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 5775
-            name: zk-compact-trft
-            protocol: UDP
-          - containerPort: 5778
-            name: config-rest
-            protocol: TCP
-          - containerPort: 6831
-            name: jg-compact-trft
-            protocol: UDP
-          - containerPort: 6832
-            name: jg-binary-trft
-            protocol: UDP
-          - containerPort: 14271
-            name: admin-http
-            protocol: TCP
-          args:
-          - --reporter.grpc.host-port=dns:///jaeger-collector.default.svc.cluster.local:14250
-          - --reporter.type=grpc
