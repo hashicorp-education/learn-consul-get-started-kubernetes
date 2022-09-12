@@ -52,7 +52,7 @@ spec:
       containers:
         - name: product-api-db
           image: hashicorpdemoapp/product-api-db:v0.0.20
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
           env:

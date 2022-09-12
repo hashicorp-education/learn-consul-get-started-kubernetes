@@ -54,7 +54,7 @@ spec:
       containers:
         - name: payments
           image: hashicorpdemoapp/payments:v0.0.16
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
         - name: jaeger-agent

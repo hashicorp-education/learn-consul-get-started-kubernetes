@@ -75,7 +75,7 @@ spec:
       containers:
         - name: product-api
           image: hashicorpdemoapp/product-api:v0.0.20
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9090
             - containerPort: 9103

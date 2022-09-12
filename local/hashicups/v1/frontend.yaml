@@ -52,7 +52,7 @@ spec:
       containers:
         - name: frontend
           image: hashicorpdemoapp/frontend:v1.0.2
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           env:
