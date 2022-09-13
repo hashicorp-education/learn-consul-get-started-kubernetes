@@ -1,21 +1,21 @@
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
-#HTTPRoute routes HTTP requests to backend services.
+# HTTPRoute routes HTTP requests to backend services.
 kind: HTTPRoute
 metadata:
   name: example-route-1
   namespace: consul
 spec:
-  #Defines the gateway listener.
+  # Defines the gateway listener.
   parentRefs:
   - name: api-gateway
-  #Rules define behaviors for network traffic that goes through the route.
+  # Rules define behaviors for network traffic that goes through the route.
   rules:
   - matches:
     - path:
         type: PathPrefix
         value: /
-    #Defines the backend service.
+    # Defines the backend service.
     backendRefs:
     - kind: Service
       name: nginx
