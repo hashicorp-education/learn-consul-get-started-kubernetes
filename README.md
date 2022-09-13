@@ -25,32 +25,17 @@
 - kubectl port-forward svc/consul-ui --namespace consul 6443:443
 - [Consul UI](https://localhost:6443/ui/)
 - [HashiCups UI](https://localhost:8443/)
-- kubectl apply --filename hashicups/intentions/deny.yaml
-- kubectl apply --filename hashicups/intentions/allow.yaml
 
 ## 04 - Observability with Consul on Kubernetes
 
-- **Add Helm Repositories**
-```sh
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add grafana https://grafana.github.io/helm-charts
-```
-- **Install Observability Suite**
-```sh
-chmod 755 install-observability-suite.sh && \
-./install-observability-suite.sh
-```
-- helm upgrade --values helm/consul-v3.yaml consul hashicorp/consul --namespace consul --version "0.46.1"
-- kubectl apply -f proxy/proxy-defaults-grpc.yaml
+- ./install-observability-suite.sh
+- helm upgrade --values helm/consul-v3.yaml consul hashicorp/consul --namespace consul --version "0.48.0"
+- kubectl apply -f proxy/proxy-defaults.yaml
 - kubectl apply -f hashicups/v3/
-
 - kubectl port-forward svc/consul-ui --namespace consul 6443:443
 - [Consul UI](https://localhost:6443/ui/)
 - kubectl port-forward svc/grafana --namespace default 3000:3000
 - [Grafana UI](http://localhost:3000/)
-- ***Login with admin/admin***
-- kubectl port-forward svc/simplest-query --namespace default 9999:16686
-- [Jaeger UI](http://localhost:9999/)
 - kubectl port-forward svc/prometheus-server --namespace default 8888:80
 - [Prometheus UI](http://localhost:8888/)
 - kubectl port-forward svc/nginx --namespace default 8080:80
