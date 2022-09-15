@@ -3,7 +3,7 @@ apiVersion: gateway.networking.k8s.io/v1alpha2
 # HTTPRoute routes HTTP requests to backend services.
 kind: HTTPRoute
 metadata:
-  name: example-route-1
+  name: http-route-1
   namespace: consul
 spec:
   # Defines the gateway listener.

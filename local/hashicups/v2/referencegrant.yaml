@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: ReferenceGrant
 metadata:
-  name: example-reference-grant
+  name: consul-reference-grant
   namespace: default
 spec:
   from:
