@@ -8,8 +8,9 @@ resource "hcp_hvn" "hvn" {
 
 # Peer the HVN to the vnet.
 module "hcp_peering" {
-  source  = "hashicorp/hcp-consul/azurerm"
-  version = "~> 0.2.5"
+  source  = "./modules/hcp_peering"
+  #source  = "hashicorp/hcp-consul/azurerm"
+  #version = "~> 0.2.8"
 
   hvn    = hcp_hvn.hvn
   prefix = local.cluster_id

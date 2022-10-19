@@ -32,7 +32,7 @@ client:
   enabled: true
   join: ${consul_hosts}
   nodeMeta:
-    terraform-module: "hcp-eks-client"
+    terraform-module: "hcp-aks-client"
 
 connectInject:
   enabled: true
@@ -42,6 +42,6 @@ controller:
 
 apiGateway:
   enabled: true
-  image: "hashicorp/consul-api-gateway:${api_gateway_version}"
+  image: "hashicorp/consul-api-gateway:0.4.0"
   managedGatewayClass:
     serviceType: LoadBalancer

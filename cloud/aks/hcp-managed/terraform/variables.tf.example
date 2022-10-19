@@ -95,13 +95,3 @@ variable "azure_subnet_ids" {
   type        = list(string)
   description = "Azure subnet ids"
 }
-
-// AKS Variables
-
-variable "appId" {
-  description = "Azure Kubernetes Service Cluster service principal"
-}
-
-variable "password" {
-  description = "Azure Kubernetes Service Cluster password"
-}

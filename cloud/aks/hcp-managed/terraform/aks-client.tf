@@ -1,7 +1,6 @@
 # Create a Kubernetes client that deploys Consul and its secrets.
 module "aks_consul_client" {
-  source  = "hashicorp/hcp-consul/azurerm//modules/hcp-aks-client"
-  version = "~> 0.2.5"
+  source  = "./modules/hcp-aks-client"
 
   cluster_id       = hcp_consul_cluster.main.cluster_id
   consul_hosts     = jsondecode(base64decode(hcp_consul_cluster.main.consul_config_file))["retry_join"]

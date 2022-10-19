@@ -2,24 +2,16 @@
 
 ## kubernetes-gs-deploy
 
-1. Authenticate to Azure CLI and set HCP environmental variables on your CLI.
+1. Authenticate to Azure CLI.
 
 ```sh
 az login
-```
-
-```sh
-export HCP_CLIENT_ID="your-hcp-client-id"
-export HCP_CLIENT_SECRET="your-hcp-client-secret"
 ```
 
 2. Run Terraform to deploy the following:
 
 - An Azure network
 - An AKS cluster
-- An AKS Consul client
-- An HCP Consul cluster
-- Peering between AKS and HCP
 
 ```sh
 terraform -chdir=terraform/ init
@@ -35,7 +27,19 @@ terraform -chdir=terraform/ apply --auto-approve
 az aks get-credentials --resource-group $(terraform -chdir=terraform/ output -raw azure_rg_name) --name $(terraform -chdir=terraform/  output -raw aks_cluster_name)
 ```
 
-4. Verify all pods have successfully started.
+4. Deploy Consul
+
+```sh
+helm install --values helm/consul-values-v1.yaml consul hashicorp/consul --version "0.48.0"
+```
+
+5. Review the Consul configuration file while the environment is being deployed.
+
+```yml
+code helm/consul-values-v1.yaml
+```
+
+6. Verify all pods have successfully started.
 
 ```sh
 kubectl get pods
@@ -43,35 +47,30 @@ kubectl get pods
 
 ```log
 NAME                                           READY   STATUS    RESTARTS   AGE
-consul-client-hl2tt                            1/1     Running   0          3m30s
-consul-client-jlscc                            1/1     Running   0          3m30s
-consul-client-qb674                            1/1     Running   0          3m30s
-consul-connect-injector-776c6b6994-j2xtk       1/1     Running   0          3m30s
-consul-connect-injector-776c6b6994-vbqzr       1/1     Running   0          3m30s
-consul-controller-6cf4d68847-lg9pw             1/1     Running   0          3m30s
-consul-webhook-cert-manager-66f95b9559-b2fll   1/1     Running   0          3m30s
+consul-client-dvg74                            1/1     Running   0          66s
+consul-client-sftsf                            1/1     Running   0          66s
+consul-client-sqvh7                            1/1     Running   0          66s
+consul-connect-injector-5456985d79-8njcs       1/1     Running   0          66s
+consul-connect-injector-5456985d79-d4lb5       1/1     Running   0          66s
+consul-controller-647874d655-mpzxb             1/1     Running   0          66s
+consul-server-0                                1/1     Running   0          65s
+consul-webhook-cert-manager-66f95b9559-9gzgd   1/1     Running   0          66s
 ```
 
-5. Review the Consul configuration file while the environment is being deployed.
-
-```yml
-code helm/consul-values-hcp-v1.yaml
-```
-
-6. Configure your CLI to interact with Consul cluster
+7. Configure your CLI to interact with Consul cluster
 
 ```sh
-export CONSUL_HTTP_TOKEN=$(terraform -chdir=terraform/ output -raw consul_token) && \
-export CONSUL_HTTP_ADDR=$(terraform -chdir=terraform/ output -raw consul_addr)
+export CONSUL_HTTP_TOKEN=$(kubectl get secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d) && \
+export CONSUL_HTTP_ADDR=$(kubectl get services/consul-ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-7. Run `consul members` command on the CLI.
+8. Run `consul members` command on the CLI.
 
 ```sh
 consul members
 ```
 
-8. Retrieve the Consul members list from the Consul API.
+9. Retrieve the Consul members list from the Consul API.
 
 ```sh
 curl -k \
@@ -79,7 +78,7 @@ curl -k \
     $CONSUL_HTTP_ADDR/v1/agent/members
 ```
 
-9. Check out the Consul members list in the Consul UI.
+10. Check out the Consul members list in the Consul UI.
 
 ```sh
 echo $CONSUL_HTTP_ADDR && \
@@ -126,7 +125,7 @@ kubectl port-forward svc/nginx --namespace default 8080:80
 http://localhost:8080 
 ```
 
-4. Create intentions.
+1. Create intentions.
 
 ```sh
 kubectl apply --filename hashicups/intentions/allow.yaml
@@ -165,12 +164,6 @@ apiGateway:
 
 ```sh
 terraform -chdir=terraform/ apply --auto-approve
-```
-
-or run a targeted tf command.
-
-```sh
-terraform -chdir=terraform/ apply -target="module.aks_consul_client" --auto-approve
 ```
 
 4. Deploy the API Gateway and the routes.
