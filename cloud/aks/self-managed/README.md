@@ -30,7 +30,14 @@ az aks get-credentials --resource-group $(terraform -chdir=terraform/ output -ra
 4. Deploy Consul
 
 ```sh
-helm install --values helm/consul-values-v1.yaml consul hashicorp/consul --version "0.48.0"
+helm install --values helm/consul-values-v1.yaml consul hashicorp/consul --version "0.49.0"
+```
+
+Agentless deploy option:
+
+```sh
+helm repo update && \
+helm install --values helm/consul-values-agentless-v1.yaml consul hashicorp/consul --version "0.49.0"
 ```
 
 5. Review the Consul configuration file while the environment is being deployed.

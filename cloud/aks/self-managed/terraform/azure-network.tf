@@ -16,6 +16,7 @@ module "network" {
   source              = "Azure/vnet/azurerm"
   address_space       = local.vnet_cidrs
   resource_group_name = azurerm_resource_group.rg.name
+  subnet_delegation   = local.subnet_delegation
   subnet_names        = keys(local.vnet_subnets)
   subnet_prefixes     = values(local.vnet_subnets)
   vnet_name           = "${local.cluster_id}-vnet"

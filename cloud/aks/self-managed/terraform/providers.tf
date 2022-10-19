@@ -1,11 +1,23 @@
 locals {
-  cluster_id     = "consul-quickstart-1666020062844"
+  cluster_id     = "learn-consul-2022-10-19"
   network_region = "westus2"
   vnet_cidrs     = ["10.0.0.0/16"]
   vnet_subnets = {
     "subnet1" = "10.0.1.0/24",
     "subnet2" = "10.0.2.0/24",
   }
+  subnet_delegation = {
+      subnet1 = {
+        "aks-delegation" = {
+          service_name = "Microsoft.ContainerService/managedClusters"
+          service_actions = [
+            "Microsoft.Network/virtualNetworks/subnets/join/action"
+          ]
+        }
+      }
+    }
+
+
 }
 
 terraform {

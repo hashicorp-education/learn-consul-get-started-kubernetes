@@ -14,9 +14,9 @@ resource "azurerm_user_assigned_identity" "identity" {
 # Create an Azure vnet and authorize Consul server traffic.
 module "network" {
   source              = "Azure/vnet/azurerm"
-  #version             = "~> 2.7.0"
   address_space       = local.vnet_cidrs
   resource_group_name = azurerm_resource_group.rg.name
+  subnet_delegation   = local.subnet_delegation
   subnet_names        = keys(local.vnet_subnets)
   subnet_prefixes     = values(local.vnet_subnets)
   vnet_name           = "${local.cluster_id}-vnet"
