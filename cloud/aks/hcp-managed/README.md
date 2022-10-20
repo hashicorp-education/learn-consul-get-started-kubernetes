@@ -167,12 +167,6 @@ apiGateway:
 terraform -chdir=terraform/ apply --auto-approve
 ```
 
-or run a targeted tf command.
-
-```sh
-terraform -chdir=terraform/ apply -target="module.aks_consul_client" --auto-approve
-```
-
 4. Deploy the API Gateway and the routes.
 
 ```sh

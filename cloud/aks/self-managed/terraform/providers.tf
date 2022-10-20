@@ -1,5 +1,5 @@
 locals {
-  cluster_id     = "learn-consul-2022-10-19"
+  cluster_id     = "learn-consul-2022-10-20"
   network_region = "westus2"
   vnet_cidrs     = ["10.0.0.0/16"]
   vnet_subnets = {
@@ -16,8 +16,6 @@ locals {
         }
       }
     }
-
-
 }
 
 terraform {

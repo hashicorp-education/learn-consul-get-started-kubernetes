@@ -1,0 +1,39 @@
+# Requires use of beta helm chart:
+# helm install --values helm/consul-values-agentless-v1.yaml consul consul --repo=https://helm.releases.hashicorp.com --version "1.0.0-beta3"
+global:
+  enabled: false
+  name: consul
+  datacenter: ${datacenter}
+  image: "hashicorp/consul-enterprise:${consul_version}-beta1-ent"
+  acls:
+    manageSystemACLs: true
+    bootstrapToken:
+      secretName: ${cluster_id}-hcp
+      secretKey: bootstrapToken
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: ${cluster_id}-hcp
+      secretKey: caCert
+  gossipEncryption:
+    secretName: ${cluster_id}-hcp
+    secretKey: gossipEncryptionKey
+
+externalServers:
+  enabled: true
+  hosts: ${consul_hosts}
+  httpsPort: 443
+  useSystemRoots: true
+  k8sAuthMethodHost: ${k8s_api_endpoint}
+
+server:
+  enabled: false
+
+connectInject:
+  enabled: true
+  consulNode:
+   meta: "hcp-aks-agentless-node"
+
+controller:
+  enabled: true

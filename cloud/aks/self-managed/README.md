@@ -28,19 +28,29 @@ az aks get-credentials --resource-group $(terraform -chdir=terraform/ output -ra
 ```
 
 4. Deploy Consul
+   1. Agentless
 
-```sh
-helm install --values helm/consul-values-v1.yaml consul hashicorp/consul --version "0.49.0"
-```
+      ```sh
+      helm repo update && \
+      helm install --values helm/consul-values-agentless-v1.yaml consul consul --repo=https://helm.releases.hashicorp.com --version "1.0.0-beta3"
+      ```
 
-Agentless deploy option:
+   2. Legacy
 
-```sh
-helm repo update && \
-helm install --values helm/consul-values-agentless-v1.yaml consul hashicorp/consul --version "0.49.0"
-```
+      ```sh
+      helm repo update && \
+      helm install --values helm/consul-values-v1.yaml consul hashicorp/consul --version "0.49.0"
+      ```
 
 5. Review the Consul configuration file while the environment is being deployed.
+
+- Agentless:
+
+```yml
+code helm/consul-values-agentless-v1.yaml
+```
+
+- Legacy:
 
 ```yml
 code helm/consul-values-v1.yaml
@@ -52,17 +62,25 @@ code helm/consul-values-v1.yaml
 kubectl get pods
 ```
 
+- Agentless:
+
+```log
+
+
+```
+
+- Legacy:
+
 ```log
 NAME                                           READY   STATUS    RESTARTS   AGE
-consul-client-dvg74                            1/1     Running   0          66s
-consul-client-sftsf                            1/1     Running   0          66s
-consul-client-sqvh7                            1/1     Running   0          66s
-consul-connect-injector-5456985d79-8njcs       1/1     Running   0          66s
-consul-connect-injector-5456985d79-d4lb5       1/1     Running   0          66s
-consul-controller-647874d655-mpzxb             1/1     Running   0          66s
-consul-server-0                                1/1     Running   0          65s
-consul-webhook-cert-manager-66f95b9559-9gzgd   1/1     Running   0          66s
+consul-connect-injector-7c68d4fcd8-gr4z6       1/1     Running   0          8m29s
+consul-connect-injector-7c68d4fcd8-kpsjs       1/1     Running   0          8m29s
+consul-controller-777b866c69-bfmgk             1/1     Running   0          8m29s
+consul-server-0                                1/1     Running   0          8m29s
+consul-webhook-cert-manager-86554d98cb-xmm4x   1/1     Running   0          8m29s
 ```
+
+
 
 7. Configure your CLI to interact with Consul cluster
 
@@ -132,7 +150,7 @@ kubectl port-forward svc/nginx --namespace default 8080:80
 http://localhost:8080 
 ```
 
-1. Create intentions.
+4. Create intentions.
 
 ```sh
 kubectl apply --filename hashicups/intentions/allow.yaml
@@ -156,24 +174,23 @@ http://localhost:8080
 kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.4.0"
 ```
 
-2. Add this block to the bottom of `/terraform/modules/hcp-aks-client/template/consul.tpl`:
+2. Deploy the updated Helm chart to deploy the Consul API Gateway controller.
 
-```yaml
-#...
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:0.4.0"
-  managedGatewayClass:
-    serviceType: LoadBalancer
-```
+   1. Agentless (not yet working with Agentless beta)
 
-3. Deploy updated Consul configuration with Terraform to deploy the API GW controller.
+      ```sh
+      helm repo update && \
+      helm upgrade --values helm/consul-values-agentless-v2.yaml consul consul --repo=https://helm.releases.hashicorp.com --version "1.0.0-beta3"
+      ```
 
-```sh
-terraform -chdir=terraform/ apply --auto-approve
-```
+   2. Legacy
 
-4. Deploy the API Gateway and the routes.
+      ```sh
+      helm repo update && \
+      helm upgrade --values helm/consul-values-v2.yaml consul hashicorp/consul --version "0.49.0"
+      ```
+
+3. Deploy the API Gateway and the routes.
 
 ```sh
 kubectl apply --filename api-gw/consul-api-gateway.yaml && \
@@ -181,19 +198,19 @@ kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s && \
 kubectl apply --filename api-gw/routes.yaml
 ```
 
-5. Deploy the RBAC and ReferenceGrant resources
+4. Deploy the RBAC and ReferenceGrant resources
 
 ```sh
 kubectl apply --filename hashicups/v2/
 ```
 
-6. Retrieve information on the `api-gateway` service.
+5. Retrieve information on the `api-gateway` service.
 
 ```sh
 kubectl get services api-gateway
 ```
 
-7. Open a connection to the listed `EXTERNAL-IP` entry in your browser to see the connection failure.
+6. Open a connection to the listed `EXTERNAL-IP` entry in your browser to see the connection failure.
 
 ```log
 http://52.137.88.78
