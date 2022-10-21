@@ -3,7 +3,7 @@ resource "hcp_hvn" "hvn" {
   cidr_block     = "172.25.32.0/20"
   cloud_provider = "azure"
   hvn_id         = local.hvn_id
-  region         = local.hvn_region
+  region         = var.hvn_region
 }
 
 # Peer the HVN to the vnet.

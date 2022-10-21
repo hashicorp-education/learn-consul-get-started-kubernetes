@@ -1,7 +1,7 @@
 # Create an Azure resource group.
 resource "azurerm_resource_group" "rg" {
   name     = "${local.cluster_id}-gid"
-  location = local.network_region
+  location = var.network_region
 }
 
 # Create a user assigned identity (required for UserAssigned identity in combination with bringing our own subnet/nsg/etc)
@@ -14,19 +14,19 @@ resource "azurerm_user_assigned_identity" "identity" {
 # Create an Azure vnet and authorize Consul server traffic.
 module "network" {
   source              = "Azure/vnet/azurerm"
-  address_space       = local.vnet_cidrs
+  address_space       = var.vnet_cidrs
   resource_group_name = azurerm_resource_group.rg.name
-  subnet_delegation   = local.subnet_delegation
-  subnet_names        = keys(local.vnet_subnets)
-  subnet_prefixes     = values(local.vnet_subnets)
+  subnet_delegation   = var.subnet_delegation
+  subnet_names        = keys(var.vnet_subnets)
+  subnet_prefixes     = values(var.vnet_subnets)
   vnet_name           = "${local.cluster_id}-vnet"
-  vnet_location       = local.network_region
+  vnet_location       = var.network_region
 
   # Every subnet will share a single route table
-  route_tables_ids = { for i, subnet in keys(local.vnet_subnets) : subnet => azurerm_route_table.rt.id }
+  route_tables_ids = { for i, subnet in keys(var.vnet_subnets) : subnet => azurerm_route_table.rt.id }
 
   # Every subnet will share a single network security group
-  nsg_ids = { for i, subnet in keys(local.vnet_subnets) : subnet => azurerm_network_security_group.nsg.id }
+  nsg_ids = { for i, subnet in keys(var.vnet_subnets) : subnet => azurerm_network_security_group.nsg.id }
 
   depends_on = [azurerm_resource_group.rg]
 }
