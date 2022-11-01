@@ -35,7 +35,12 @@ client:
     terraform-module: "hcp-aks-client"
 
 connectInject:
+  transparentProxy:
+    defaultEnabled: false
   enabled: true
+  default: true
+  consulNode:
+    meta: "hcp-aks-agentless-node"
 
 controller:
   enabled: true

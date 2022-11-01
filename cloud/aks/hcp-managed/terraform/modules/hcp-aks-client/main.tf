@@ -14,7 +14,6 @@ resource "kubernetes_secret" "consul_secrets" {
 
   data = {
     caCert              = var.consul_ca_file
-    gossipEncryptionKey = var.gossip_encryption_key
     bootstrapToken      = var.boostrap_acl_token
   }
 

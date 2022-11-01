@@ -9,11 +9,6 @@ variable "boostrap_acl_token" {
   description = "The ACL bootstrap token used to create necessary ACL tokens for the Helm chart"
 }
 
-variable "gossip_encryption_key" {
-  type        = string
-  description = "The gossip encryption key of the Consul cluster"
-}
-
 variable "consul_ca_file" {
   type        = string
   description = "The Consul CA certificate bundle used to validate TLS connections"
@@ -53,5 +48,5 @@ variable "consul_version" {
 variable "chart_version" {
   type        = string
   description = "The Consul Helm chart version to use"
-  default     = "0.48.0"
+  default     = "1.0.0"
 }
