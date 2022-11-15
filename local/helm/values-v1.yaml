@@ -28,6 +28,3 @@ ui:
 # Configures and installs the automatic Consul Connect sidecar injector.
 connectInject:
   enabled: true
-# Configures and installs the Consul controller for managing custom resources.
-controller:
-  enabled: true

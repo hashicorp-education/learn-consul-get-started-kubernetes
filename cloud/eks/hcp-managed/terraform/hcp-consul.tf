@@ -17,12 +17,6 @@ resource "hcp_consul_cluster" "main" {
   min_consul_version = var.consul_version
 }
 
-resource "random_string" "cluster_id" {
-  length  = 6
-  special = false
-  upper = false
-}
-
 resource "hcp_consul_cluster_root_token" "token" {
   cluster_id = hcp_consul_cluster.main.id
 }

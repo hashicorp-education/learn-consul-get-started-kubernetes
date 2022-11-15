@@ -14,6 +14,5 @@ output "vpc" {
   value = {
     vpc_id         = module.vpc.vpc_id
     vpc_cidr_block = module.vpc.vpc_cidr_block
-    hvn_cidr_block = var.hvn_cidr_block
   }
 }

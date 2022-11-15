@@ -3,7 +3,11 @@
 ## 01 - Install Consul
 
 - kind create cluster --config=kind/cluster.yaml
-- helm install --values helm/consul-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "0.48.0"
+- helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.0-beta5"
+- helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "0.49.0"
+
+- helm upgrade --values helm/values-v1.yaml consul hashicorp/consul --version "1.0.0-beta5" --set 'server.extraConfig="{"log_level": "DEBUG"}"'
+
 - kubectl port-forward svc/consul-ui --namespace consul 6443:443
 - [Consul UI](https://localhost:6443/ui/)
 

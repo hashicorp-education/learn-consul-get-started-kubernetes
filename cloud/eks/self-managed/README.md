@@ -14,9 +14,6 @@ export HCP_CLIENT_SECRET="your-hcp-client-secret"
 2. Run Terraform to deploy the following:
 
 - An EKS cluster
-- An EKS Consul client
-- An HCP Consul cluster
-- Peering between EKS and HCP
 
 ```sh
 terraform -chdir=terraform/ init
@@ -32,37 +29,42 @@ terraform -chdir=terraform/ apply --auto-approve
 aws eks --region $(terraform -chdir=terraform/ output -raw region) update-kubeconfig --name $(terraform -chdir=terraform/  output -raw kubernetes_cluster_id)
 ```
 
-4. Verify all pods have successfully started.
+4. Install Consul
 
 ```sh
-kubectl get pods
+helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.0-beta5"
+```
+
+5. Verify all pods have successfully started.
+
+```sh
+kubectl get pods --namespace consul
 ```
 
 ```log
 NAME                                           READY   STATUS    RESTARTS   AGE
-consul-client-4v8jp                            1/1     Running   0          6m27s
-consul-client-brcxj                            1/1     Running   0          6m27s
-consul-client-hb77j                            1/1     Running   0          6m26s
-consul-connect-injector-548b99fdc8-hrbrm       1/1     Running   0          6m27s
-consul-connect-injector-548b99fdc8-qhqqx       1/1     Running   0          6m27s
-consul-controller-88975c6d7-5shb2              1/1     Running   0          6m26s
-consul-webhook-cert-manager-7597cbb5d4-l9xwb   1/1     Running   0          6m27s
+consul-connect-injector-6fc8d669b8-2n82l       1/1     Running   0          2m34s
+consul-connect-injector-6fc8d669b8-9mqfm       1/1     Running   0          2m34s
+consul-controller-554c7f79c4-2xc64             1/1     Running   0          2m34s
+consul-server-0                                1/1     Running   0          2m34s
+consul-webhook-cert-manager-64889c4964-wxc9b   1/1     Running   0          2m34s
 ```
 
-5. Review the Consul configuration file while the environment is being deployed.
+6. Review the Consul configuration file while the environment is being deployed.
 
 ```yml
-code helm/consul-values-hcp-v1.yaml
+code helm/values-v1.yaml
 ```
 
-6. Configure your CLI to interact with Consul cluster
+7. Configure your CLI to interact with Consul cluster
 
 ```sh
-export CONSUL_HTTP_TOKEN=$(terraform -chdir=terraform/ output -raw consul_token) && \
-export CONSUL_HTTP_ADDR=$(terraform -chdir=terraform/ output -raw consul_addr)
+export CONSUL_HTTP_TOKEN=$(kubectl get --namespace consul secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d)
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
 ```
 
-7. Run `consul members` command on the CLI.
+1. Run `consul members` command on the CLI.
 
 ```sh
 consul members

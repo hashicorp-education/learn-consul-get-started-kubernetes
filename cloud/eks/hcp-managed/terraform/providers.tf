@@ -72,3 +72,9 @@ locals {
   cluster_id = "${var.cluster_id}-${random_string.cluster_id.id}"
   hvn_id     = "${var.hvn_id}-${random_string.cluster_id.id}"
 }
+
+resource "random_string" "cluster_id" {
+  length  = 6
+  special = false
+  upper = false
+}
