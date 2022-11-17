@@ -48,14 +48,11 @@ connectInject:
     defaultEnabled: true
     # Enables service metrics and sidecar proxy metrics merging into one endpoint.
     defaultEnableMerging: true
-# Configures and installs the Consul controller for managing custom resources.
-controller:
-  enabled: true
 # Configures and installs the Consul API Gateway.
 apiGateway:
   enabled: true
   # Image to use for the api-gateway-controller pods and gateway instances
-  image: "hashicorp/consul-api-gateway:0.4.0"
+  image: "hashicorp/consul-api-gateway:0.5.0"
   # Configuration settings for the GatewayClass
   managedGatewayClass:
     # Defines the type of service created for gateways (e.g. LoadBalancer, ClusterIP, NodePort)
