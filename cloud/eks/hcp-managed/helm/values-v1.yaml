@@ -14,9 +14,6 @@ global:
     caCert:
       secretName: ${cluster_id}-hcp
       secretKey: caCert
-  gossipEncryption:
-    secretName: ${cluster_id}-hcp
-    secretKey: gossipEncryptionKey
 
 externalServers:
   enabled: true
@@ -27,21 +24,3 @@ externalServers:
 
 server:
   enabled: false
-
-client:
-  enabled: true
-  join: ${consul_hosts}
-  nodeMeta:
-    terraform-module: "hcp-eks-client"
-
-connectInject:
-  enabled: true
-
-controller:
-  enabled: true
-
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:${api_gateway_version}"
-  managedGatewayClass:
-    serviceType: LoadBalancer

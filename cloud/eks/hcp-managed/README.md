@@ -1,191 +1,117 @@
-# Deployment steps
+# Consul API Gateway on EKS + HCP
 
-## kubernetes-gs-deploy
+## Overview
 
-1. Set environmental variables on your CLI.
+Terraform will perform the following actions:
+- Create VPC and HVN networks
+- Peer VPC and HVN networks
+- Create HCP Consul cluster
+- Create EKS cluster
+- Deploy API GW CRDs to EKS
+- Deploy Consul + API GW controller to EKS
 
-```sh
-export AWS_ACCESS_KEY_ID="your-aws-access-key-id"
-export AWS_SECRET_ACCESS_KEY="your aws-secret-key"
-export HCP_CLIENT_ID="your-hcp-client-id"
-export HCP_CLIENT_SECRET="your-hcp-client-secret"
-```
+You will perform these steps:
+- Deploy Hashicups & Echo services to EKS
+- Deploy remaining API GW resources (gateway.yaml & routes.yaml) to EKS
+- Verify AWS Load Balancer is created once API GW is deployed
+- Verify access behavior with Hashicups via API GW
+- Verify load balancing behavior with Echo Servers via API GW
+- Clean up environment
 
-2. Run Terraform to deploy the following:
+## Steps
 
-- An EKS cluster
-- An EKS Consul client
-- An HCP Consul cluster
-- Peering between EKS and HCP
+### kubernetes-gs-deploy
 
-```sh
-terraform -chdir=terraform/ init
-```
-
-```sh
-terraform -chdir=terraform/ apply --auto-approve
-```
-
-3. Configure your CLI to communicate with EKS.
-
-```sh
-aws eks --region $(terraform -chdir=terraform/ output -raw region) update-kubeconfig --name $(terraform -chdir=terraform/  output -raw kubernetes_cluster_id)
-```
-
-4. Verify all pods have successfully started.
-
-```sh
-kubectl get pods
-```
-
-```log
-NAME                                           READY   STATUS    RESTARTS   AGE
-consul-client-4v8jp                            1/1     Running   0          6m27s
-consul-client-brcxj                            1/1     Running   0          6m27s
-consul-client-hb77j                            1/1     Running   0          6m26s
-consul-connect-injector-548b99fdc8-hrbrm       1/1     Running   0          6m27s
-consul-connect-injector-548b99fdc8-qhqqx       1/1     Running   0          6m27s
-consul-controller-88975c6d7-5shb2              1/1     Running   0          6m26s
-consul-webhook-cert-manager-7597cbb5d4-l9xwb   1/1     Running   0          6m27s
-```
-
-5. Review the Consul configuration file while the environment is being deployed.
-
-```yml
-code helm/consul-values-hcp-v1.yaml
-```
-
-6. Configure your CLI to interact with Consul cluster
+1. Clone repo
+2. `cd learn-consul-get-started-kubernetes/cloud/eks/hcp-managed`
+3. Set credential environment variables for AWS and HCP
+    1. 
+    ```shell
+    export AWS_ACCESS_KEY_ID="YOUR_AWS_ACCESS_KEY"
+    export AWS_SECRET_ACCESS_KEY="YOUR_AWS_SECRET_KEY"
+    export HCP_CLIENT_ID="YOUR_HCP_CLIENT_ID"
+    export HCP_CLIENT_SECRET="YOUR_HCP_SECRET"
+    ```
+4. Run Terraform to create resources (takes 10-15 minutes to complete)
+    1. `terraform -chdir=terraform/ init`
+    2. `terraform -chdir=terraform/ apply`
+    3. `yes`
+5. Configure terminal to communicate with your EKS cluster
+    1. `aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw kubernetes_cluster_id)` 
+6. Configure terminal to communicate with your HCP Consul cluster
 
 ```sh
-export CONSUL_HTTP_TOKEN=$(terraform -chdir=terraform/ output -raw consul_token) && \
-export CONSUL_HTTP_ADDR=$(terraform -chdir=terraform/ output -raw consul_addr)
+export CONSUL_HTTP_TOKEN=$(terraform output -raw consul_token) && \
+export CONSUL_HTTP_ADDR=$(terraform output -raw consul_addr)
 ```
 
-7. Run `consul members` command on the CLI.
+7. Confirm communication with your HCP Consul cluster.
+   1. `consul catalog services`
+   2. `consul members`
+
+### kubernetes-gs-service-mesh
+
+8. Create example service resources.
+    1. `kubectl apply --filename hashicups/v1/`
+
+9. Confirm all HashiCops pods are running.
+   1.  `kubectl get pods`
+
+10. Forward this port and test the connection.
+    1.  `kubectl port-forward svc/nginx --namespace default 8080:80`
+    2.  [http://localhost:8080](http://localhost:8080)
+    3.  You should see an error.
+
+11. Create intentions that allow communication between microservices.
+    1.  `kubectl apply --filename hashicups/intentions/allow.yaml`
+
+12. Forward this port and test the connection again.
+    1.  `kubectl port-forward svc/nginx --namespace default 8080:80`
+    2.  [http://localhost:8080](http://localhost:8080)
+    3.  You should see the HashiCups UI.
+
+### kubernetes-gs-ingress
+
+13. Add API Gateway CRDs.
+    1.  `kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.5.1"`
+
+13. Enable API Gateway and upgrade your Consul Helm deployment.
+    1.  do this
+    2.  `cp helm/values-v2.yaml modules/eks-client/template/consul.tpl` 
+    3.  `terraform apply`
+    4.  `yes`
+
+14. Create API Gateway and respective route resources
 
 ```sh
-consul members
+kubectl apply --filename api-gw/consul-api-gateway.yaml --namespace consul && \
+kubectl wait --for=condition=ready gateway/api-gateway --namespace consul --timeout=90s && \
+kubectl apply --filename api-gw/routes.yaml --namespace consul
 ```
 
-8. Retrieve the Consul members list from the Consul API.
-
-```sh
-curl -k \
-    --header "X-Consul-Token: $CONSUL_HTTP_TOKEN" \
-    $CONSUL_HTTP_ADDR/v1/agent/members
-```
-
-9. Check out the Consul members list in the Consul UI.
-
-```sh
-echo $CONSUL_HTTP_ADDR && \
-echo $CONSUL_HTTP_TOKEN
-```
-
-## kubernetes-gs-service-mesh
-
-1. Content
-
-```sh
-kubectl apply --filename hashicups/v1/
-```
-
-2. View these services in Consul
-
-```sh
-consul catalog services
-```
-
-3. Forward the port for nginx, then open a connection to it in your browser to see the connection failure. Kill the port forward once complete.
-
-```sh
-kubectl port-forward svc/nginx --namespace default 8080:80
-```
-
-```log
-http://localhost:8080 
-```
-
-4. Create intentions.
-
-```sh
-kubectl apply --filename hashicups/intentions/allow.yaml
-```
-
-5. Forward the port for nginx, then open a connection to it in your browser to see the connection success. Kill the port forward once complete.
-
-```sh
-kubectl port-forward svc/nginx --namespace default 8080:80
-```
-
-```log
-http://localhost:8080 
-```
-
-## kubernetes-gs-ingress
-
-1. Create the custom resource definitions (CRD) for the API Gateway Controller.
-
-```sh
-kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.4.0"
-```
-
-2. Add this block to the bottom of `/terraform/modules/eks-client/template/consul.tpl`:
-
-```yaml
-#...
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:0.4.0"
-  managedGatewayClass:
-    serviceType: LoadBalancer
-```
-
-3. Deploy updated Consul configuration with Terraform to deploy the API GW controller.
-
-```sh
-terraform -chdir=terraform/ apply --auto-approve
-```
-
-4. Deploy the API Gateway and the routes.
-
-```sh
-kubectl apply --filename api-gw/consul-api-gateway.yaml && \
-kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s && \
-kubectl apply --filename api-gw/routes.yaml
-```
-
-5. Deploy the RBAC and ReferenceGrant resources
+15. Deploy RBAC and ReferenceGrant resources
 
 ```sh
 kubectl apply --filename hashicups/v2/
 ```
 
-6. Retrieve information on the `api-gateway` service.
+16. Confirm all services are running and intentions have been created.
+    1.  `consul catalog services | grep api-gateway`
+    2.  `consul intention list`
+
+17.  Locate the external IP for your API Gateway.
 
 ```sh
-kubectl get services api-gateway
+kubectl get svc/api-gateway --namespace consul -o json | jq -r '.status.loadBalancer.ingress[0].hostname'
 ```
 
-7. Open a connection to the listed `EXTERNAL-IP` DNS entry in your browser to see the connection success.
+18. Visit the following urls in the browser
+    1. [http://your-aws-load-balancer-dns-name:8080](http://your-aws-load-balancer-dns-name:8080)
 
-```log
-http://a290ae604f3104037ae12c5d743eddc9-935877010.us-east-1.elb.amazonaws.com
-```
+### kubernetes-gs-observability
 
-## kubernetes-gs-observability
+19. 
 
-1. Content
-
-- ./install-observability-suite.sh
-- cp helm/consul-values-hcp-v3.yaml terraform/modules/eks-client/template/consul.tpl
-- kubectl apply -f proxy/proxy-defaults.yaml
-- terraform -chdir=terraform/ apply --auto-approve
-- Check the Consul UI for metrics (Is this possible with HCP?)
-- kubectl port-forward svc/grafana --namespace default 3000:3000
-- [Grafana UI](http://localhost:3000/)
-- kubectl port-forward svc/prometheus-server --namespace default 8888:80
-- [Prometheus UI](http://localhost:8888/)
-- kubectl port-forward svc/nginx --namespace default 8080:80
-- [HashiCups UI](http://localhost:8080/)
+2020. Clean up
+    1. Destroy Terraform resources
+      `terraform destroy`

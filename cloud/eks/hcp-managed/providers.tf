@@ -4,13 +4,29 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 3.43"
     }
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = ">= 0.18.0"
+    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.4.1"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.3.0"
+    }
     kubectl = {
       source  = "gavinbunney/kubectl"
       version = ">= 1.11.3"
+    }
+    kustomization = {
+      source  = "kbst/kustomization"
+      version = "0.7.2"
+    }
+    consul = {
+      source  = "hashicorp/consul"
+      version = "~> 2.14"
     }
     random = {
       source  = "hashicorp/random"
@@ -20,7 +36,18 @@ terraform {
 }
 
 provider "aws" {
-  region     = var.vpc_region
+  region = var.vpc_region
+}
+
+provider "hcp" {
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.cluster.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
+  }
 }
 
 provider "kubernetes" {
@@ -36,12 +63,12 @@ provider "kubectl" {
   load_config_file       = false
 }
 
-locals {
-  cluster_id = "${var.cluster_id}-${random_string.cluster_id.id}"
+provider "consul" {
+  address = hcp_consul_cluster.main.consul_public_endpoint_url
+  token   = hcp_consul_cluster_root_token.token.secret_id
 }
 
-resource "random_string" "cluster_id" {
-  length  = 6
-  special = false
-  upper = false
+locals {
+  cluster_id = "${var.cluster_id}-${random_string.cluster_id.id}"
+  hvn_id     = "${var.hvn_id}-${random_string.cluster_id.id}"
 }

@@ -2,24 +2,25 @@ variable "cluster_id" {
   type        = string
   description = "The name of your HCP Consul cluster"
   default     = "hcp-learn"
+  # default = "learn-hcp-apigw"
 }
 
 variable "vpc_region" {
   type        = string
   description = "The AWS region to create resources in"
-  default     = "us-east-1"
+  default     = "us-west-2"
 }
 
 variable "hvn_region" {
   type        = string
   description = "The HCP region to create resources in"
-  default     = "us-east-1"
+  default     = "us-west-2"
 }
 
 variable "hvn_id" {
   type        = string
   description = "The name of your HCP HVN"
-  default     = "hcp-learn"
+  default     = "learn-hcp-apigw"
 }
 
 variable "hvn_cidr_block" {
@@ -37,5 +38,11 @@ variable "consul_tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.13.2"
+  default     = "v1.14.1"
+}
+
+variable "api_gateway_version" {
+  type        = string
+  description = "The Consul API gateway CRD version to use"
+  default     = "0.5.1"
 }

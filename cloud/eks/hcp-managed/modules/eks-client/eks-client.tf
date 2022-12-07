@@ -1,7 +1,7 @@
-
 resource "kubernetes_secret" "consul_secrets" {
   metadata {
     name = "${var.cluster_id}-hcp"
+    namespace  = "consul"
   }
 
   data = {
@@ -18,6 +18,7 @@ resource "helm_release" "consul" {
   repository = "https://helm.releases.hashicorp.com"
   version    = var.chart_version
   chart      = "consul"
+  namespace  = "consul"
 
   values = [
     templatefile("${path.module}/template/consul.tpl", {
@@ -26,6 +27,7 @@ resource "helm_release" "consul" {
       cluster_id       = var.cluster_id
       k8s_api_endpoint = var.k8s_api_endpoint
       consul_version   = substr(var.consul_version, 1, -1)
+      api_gateway_version = var.api_gateway_version
     })
   ]
 
