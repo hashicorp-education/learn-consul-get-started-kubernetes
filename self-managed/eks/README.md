@@ -25,7 +25,11 @@ Install Consul on Kubernetes and quickly explore service mesh features such as s
 6. Install Consul in your EKS cluster
 
 ```sh
-helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.1"
+helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.2"
+```
+
+```sh
+consul-k8s install -config-file=helm/values-v1.yaml
 ```
 
 7. Configure your terminal to communicate with your Consul cluster
@@ -70,6 +74,10 @@ export CONSUL_HTTP_SSL_VERIFY=false
 
 ```sh
 helm upgrade --values helm/values-v2.yaml consul hashicorp/consul --namespace consul --version "1.0.1"
+```
+
+```sh
+consul-k8s upgrade -config-file=helm/values-v2.yaml
 ```
 
 16. Create API Gateway and respective route resources
