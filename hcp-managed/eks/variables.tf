@@ -1,3 +1,8 @@
+locals {
+  cluster_id = "${var.cluster_id}-${random_string.cluster_id.id}"
+  hvn_id     = "${var.hvn_id}-${random_string.cluster_id.id}"
+}
+
 variable "cluster_id" {
   type        = string
   description = "The name of your HCP Consul cluster"

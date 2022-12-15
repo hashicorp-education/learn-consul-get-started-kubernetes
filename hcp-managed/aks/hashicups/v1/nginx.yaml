@@ -48,7 +48,7 @@ data:
         proxy_buffering off;
 
         location / {
-          proxy_pass http://127.0.0.1:3000;
+          proxy_pass http://localhost:3000;
         }
 
         location ^~ /hashicups {
@@ -57,11 +57,11 @@ data:
 
         location /static {
           proxy_cache_valid 60m;
-          proxy_pass http://127.0.0.1:3000;
+          proxy_pass http://localhost:3000;
         }
 
         location /api {
-          proxy_pass http://127.0.0.1:8080;
+          proxy_pass http://localhost:8080;
         }
 
         error_page   500 502 503 504  /50x.html;
@@ -103,6 +103,8 @@ spec:
         service: nginx
         app: nginx
       annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "frontend:3000, public-api:8080"
     spec:

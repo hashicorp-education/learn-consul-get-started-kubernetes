@@ -4,14 +4,17 @@ kind: Service
 metadata:
   name: product-api
   namespace: default
-spec:
-  selector:
+  labels:
     app: product-api
+spec:
+  type: ClusterIP
   ports:
     - name: http
       protocol: TCP
       port: 9090
       targetPort: 9090
+  selector:
+    app: product-api
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -71,7 +74,7 @@ spec:
                 path: conf.json
       containers:
         - name: product-api
-          image: hashicorpdemoapp/product-api:v0.0.20
+          image: hashicorpdemoapp/product-api:v0.0.22
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9090

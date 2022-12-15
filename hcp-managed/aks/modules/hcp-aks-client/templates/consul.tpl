@@ -10,10 +10,25 @@ global:
       secretKey: bootstrapToken
   tls:
     enabled: true
+
+%{ if consul_client_agent ~}
     enableAutoEncrypt: true
     caCert:
       secretName: ${cluster_id}-hcp
       secretKey: caCert
+  gossipEncryption:
+    secretName: ${cluster_id}-hcp
+    secretKey: gossipEncryptionKey
+
+client:
+  enabled: true
+  join: ${consul_hosts}
+  nodeMeta:
+    terraform-module: "hcp-aks-client"
+
+controller:
+  enabled: true
+%{ endif ~}
 
 externalServers:
   enabled: true
@@ -25,19 +40,22 @@ externalServers:
 server:
   enabled: false
 
-client:
-  enabled: true
-  join: ${consul_hosts}
-  nodeMeta:
-    terraform-module: "hcp-aks-client"
-
 connectInject:
   transparentProxy:
-    defaultEnabled: false
+    defaultEnabled: true
   enabled: true
   default: true
+%{ if !consul_client_agent ~}
   consulNode:
-    meta: "hcp-aks-agentless-node"
+    meta:
+      terraform-module: "hcp-aks-client"
+%{ endif ~}
 
-controller:
-  enabled: true
+#ingressGateways:
+#  enabled: true
+#  gateways:
+#    - name: ingress-gateway
+#      service:
+#        type: LoadBalancer
+#        ports:
+#        - port: 8080

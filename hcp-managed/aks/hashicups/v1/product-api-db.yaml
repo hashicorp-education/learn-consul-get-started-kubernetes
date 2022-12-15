@@ -51,7 +51,7 @@ spec:
       serviceAccountName: product-api-db
       containers:
         - name: product-api-db
-          image: hashicorpdemoapp/product-api-db:v0.0.20
+          image: hashicorpdemoapp/product-api-db:v0.0.22
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432

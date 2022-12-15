@@ -7,7 +7,7 @@ spec:
   from:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      namespace: default  # Must match the namespace that api-gw/routes.yaml is deployed into
+      namespace: consul  # Must match the namespace that api-gw/routes.yaml is deployed into
   to:
     - group: ""
       kind: Service

@@ -1,199 +1,115 @@
-# Deployment steps
+# Getting Started with Consul on Kubernetes: HCP Consul with AKS
 
-## kubernetes-gs-deploy
+## Overview
 
-1. Authenticate to Azure CLI and set HCP environmental variables on your CLI.
+Install Consul on Kubernetes and quickly explore service mesh features such as service-to-service permissions with intentions, ingress with API Gateway, and enhanced observability.
+
+## Steps
+
+### kubernetes-gs-deploy
+
+1. Clone repo
+2. `cd learn-consul-get-started-kubernetes/cloud/aks/hcp-managed`
+3. Authenticate to Azure CLI.
 
 ```sh
 az login
 ```
 
-```sh
-export HCP_CLIENT_ID="your-hcp-client-id"
-export HCP_CLIENT_SECRET="your-hcp-client-secret"
-```
-
-2. Run Terraform to deploy the following:
-
-- An Azure network
-- An AKS cluster
-- An AKS Consul client
-- An HCP Consul cluster
-- Peering between AKS and HCP
+4. Set environment variables for HCP.
 
 ```sh
-terraform -chdir=terraform/ init
+export HCP_CLIENT_ID="YOUR_HCP_CLIENT_ID"
+export HCP_CLIENT_SECRET="YOUR_HCP_SECRET"
 ```
+
+5. Run Terraform to create resources (takes 10-15 minutes to complete)
+    1. `terraform init`
+    2. `terraform apply`
+    3. `yes`
+
+    Terraform will perform the following actions:
+    - Create Azure and HVN networks
+    - Create HCP Consul cluster
+    - Create AKS cluster
+
+6. Configure terminal to communicate with your EKS cluster
 
 ```sh
-terraform -chdir=terraform/ apply --auto-approve
+az aks get-credentials --resource-group $(terraform output -raw azure_rg_name) --name $(terraform output -raw aks_cluster_name)
 ```
 
-3. Configure your CLI to communicate with AKS.
+7. Configure terminal to communicate with your HCP Consul cluster
 
 ```sh
-az aks get-credentials --resource-group $(terraform -chdir=terraform/ output -raw azure_rg_name) --name $(terraform -chdir=terraform/  output -raw aks_cluster_name)
+export CONSUL_HTTP_TOKEN=$(terraform output -raw consul_root_token) && \
+export CONSUL_HTTP_ADDR=$(terraform output -raw consul_url)
 ```
 
-4. Verify all pods have successfully started.
+8. Confirm communication with your HCP Consul cluster.
+   1. `consul catalog services`
+   2. `consul members`
+
+### kubernetes-gs-service-mesh
+
+9. Create example service resources.
+    1. `kubectl apply --filename hashicups/v1/`
+
+10. Confirm all HashiCops pods are running.
+   1.  `kubectl get pods`
+
+11. Forward this port and test the connection.
+    1.  `kubectl port-forward svc/nginx --namespace default 8080:80`
+    2.  [http://localhost:8080](http://localhost:8080)
+    3.  You should see an error.
+
+12. Create intentions that allow communication between microservices.
+    1.  `kubectl apply --filename hashicups/intentions/allow.yaml`
+
+13. Forward this port and test the connection again.
+    1.  `kubectl port-forward svc/nginx --namespace default 8080:80`
+    2.  [http://localhost:8080](http://localhost:8080)
+    3.  You should see the HashiCups UI.
+
+### kubernetes-gs-ingress
+
+14. Add API Gateway CRDs.
+    1.  `kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.5.1"`
+
+15. Enable API Gateway and upgrade your Consul Helm deployment.
+    1.  do this
+    2.  `cp helm/values-v2.yaml modules/aks-client/template/consul.tpl` 
+    3.  `terraform apply`
+    4.  `yes`
+
+16. Create API Gateway and respective route resources
 
 ```sh
-kubectl get pods
+kubectl apply --filename api-gw/consul-api-gateway.yaml --namespace consul && \
+kubectl wait --for=condition=ready gateway/api-gateway --namespace consul --timeout=90s && \
+kubectl apply --filename api-gw/routes.yaml --namespace consul
 ```
 
-```log
-NAME                                           READY   STATUS    RESTARTS   AGE
-consul-client-hl2tt                            1/1     Running   0          3m30s
-consul-client-jlscc                            1/1     Running   0          3m30s
-consul-client-qb674                            1/1     Running   0          3m30s
-consul-connect-injector-776c6b6994-j2xtk       1/1     Running   0          3m30s
-consul-connect-injector-776c6b6994-vbqzr       1/1     Running   0          3m30s
-consul-controller-6cf4d68847-lg9pw             1/1     Running   0          3m30s
-consul-webhook-cert-manager-66f95b9559-b2fll   1/1     Running   0          3m30s
-```
-
-5. Review the Consul configuration file while the environment is being deployed.
-
-```yml
-code helm/consul-values-hcp-v1.yaml
-```
-
-6. Configure your CLI to interact with Consul cluster
-
-```sh
-export CONSUL_HTTP_TOKEN=$(terraform -chdir=terraform/ output -raw consul_token) && \
-export CONSUL_HTTP_ADDR=$(terraform -chdir=terraform/ output -raw consul_addr)
-```
-
-7. Run `consul members` command on the CLI.
-
-```sh
-consul members
-```
-
-8. Retrieve the Consul members list from the Consul API.
-
-```sh
-curl -k \
-    --header "X-Consul-Token: $CONSUL_HTTP_TOKEN" \
-    $CONSUL_HTTP_ADDR/v1/agent/members
-```
-
-9. Check out the Consul members list in the Consul UI.
-
-```sh
-echo $CONSUL_HTTP_ADDR && \
-echo $CONSUL_HTTP_TOKEN
-```
-
-## kubernetes-gs-service-mesh
-
-1. Content
-
-```sh
-kubectl apply --filename hashicups/v1/
-```
-
-2. View these services in Consul
-
-```sh
-consul catalog services
-```
-
-```log
-consul
-frontend
-frontend-sidecar-proxy
-nginx
-nginx-sidecar-proxy
-payments
-payments-sidecar-proxy
-product-api
-product-api-db
-product-api-db-sidecar-proxy
-product-api-sidecar-proxy
-public-api
-public-api-sidecar-proxy
-```
-
-3. Forward the port for nginx, then open a connection to it in your browser to see the connection failure. Kill the port forward once complete.
-
-```sh
-kubectl port-forward svc/nginx --namespace default 8080:80
-```
-
-```log
-http://localhost:8080 
-```
-
-4. Create intentions.
-
-```sh
-kubectl apply --filename hashicups/intentions/allow.yaml
-```
-
-5. Forward the port for nginx, then open a connection to it in your browser to see the connection success. Kill the port forward once complete.
-
-```sh
-kubectl port-forward svc/nginx --namespace default 8080:80
-```
-
-```log
-http://localhost:8080 
-```
-
-## kubernetes-gs-ingress
-
-1. Create the custom resource definitions (CRD) for the API Gateway Controller.
-
-```sh
-kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.4.0"
-```
-
-2. Add this block to the bottom of `/terraform/modules/hcp-aks-client/template/consul.tpl`:
-
-```yaml
-#...
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:0.4.0"
-  managedGatewayClass:
-    serviceType: LoadBalancer
-```
-
-3. Deploy updated Consul configuration with Terraform to deploy the API GW controller.
-
-```sh
-terraform -chdir=terraform/ apply --auto-approve
-```
-
-4. Deploy the API Gateway and the routes.
-
-```sh
-kubectl apply --filename api-gw/consul-api-gateway.yaml && \
-kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s && \
-kubectl apply --filename api-gw/routes.yaml
-```
-
-5. Deploy the RBAC and ReferenceGrant resources
+17. Deploy RBAC and ReferenceGrant resources
 
 ```sh
 kubectl apply --filename hashicups/v2/
 ```
 
-6. Retrieve information on the `api-gateway` service.
+18. Confirm all services are running and intentions have been created.
+    1.  `consul catalog services | grep api-gateway`
+    2.  `consul intention list`
+
+19.  Locate the external IP for your API Gateway.
 
 ```sh
-kubectl get services api-gateway
+kubectl get svc/api-gateway --namespace consul -o json | jq -r '.status.loadBalancer.ingress[0].ip'
 ```
 
-7. Open a connection to the listed `EXTERNAL-IP` entry in your browser to see the connection failure.
+20.  Visit the following urls in the browser - you will see a connection failure.
+    1. [http://your-azure-load-balancer-ip:8080](http://your-azure-load-balancer-ip:8080)
 
-```log
-http://52.137.88.78
-```
-
-8. Create this file `/terraform/azure-nsg-api-gateway.tf` and put your `EXTERNAL-IP` in the `destination_address_prefix` field.
+21. Create this file `/terraform/azure-nsg-api-gateway.tf` and put your `EXTERNAL-IP` in the `destination_address_prefix` field.
 
 ```t
 resource "azurerm_network_security_rule" "api-gateway-ingress" {
@@ -203,7 +119,7 @@ resource "azurerm_network_security_rule" "api-gateway-ingress" {
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "80"
+  destination_port_range      = "8080"
   source_address_prefix       = "*"
   destination_address_prefix  = "52.137.88.78/32"
   resource_group_name         = azurerm_resource_group.rg.name
@@ -211,21 +127,19 @@ resource "azurerm_network_security_rule" "api-gateway-ingress" {
 }
 ```
 
-9. Deploy updated Consul configuration with Terraform to deploy the network security group rule.
+22. Deploy updated Consul configuration with Terraform to deploy the network security group rule.
 
 ```sh
 terraform -chdir=terraform/ apply --auto-approve
 ```
 
-10. Open a connection to the listed `EXTERNAL-IP` entry in your browser to see the connection success.
+23.  Visit the following urls in the browser - you will see a connection success.
+    1. [http://your-azure-load-balancer-ip:8080](http://your-azure-load-balancer-ip:8080)
 
-```log
-http://52.137.88.78
-```
 
-## kubernetes-gs-observability
+### kubernetes-gs-observability
 
-1. Content
+24. do this
 
 - ./install-observability-suite.sh
 - cp helm/consul-values-hcp-v3.yaml terraform/modules/aks-client/template/consul.tpl
@@ -238,3 +152,7 @@ http://52.137.88.78
 - [Prometheus UI](http://localhost:8888/)
 - kubectl port-forward svc/nginx --namespace default 8080:80
 - [HashiCups UI](http://localhost:8080/)
+
+25.   Clean up
+    1. Destroy Terraform resources
+      `terraform destroy`

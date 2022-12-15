@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source                = "hashicorp/azurerm"
-      version               = "~> 3.27"
+      version               = "~> 2.65"
       configuration_aliases = [azurerm.azure]
     }
     azuread = {
@@ -11,7 +11,7 @@ terraform {
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = ">= 0.46.0"
+      version = ">= 0.23.1"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -25,18 +25,17 @@ terraform {
       source  = "gavinbunney/kubectl"
       version = ">= 1.11.3"
     }
-    consul = {
-      source  = "hashicorp/consul"
-      version = "~> 2.14"
-    }
     random = {
       source  = "hashicorp/random"
       version = ">= 2"
     }
   }
 
-  required_version = ">= 1.2"
+  required_version = ">= 1.0.11"
 
+  provider_meta "hcp" {
+    module_name = "hcp-consul"
+  }
 }
 
 # Configure providers to use the credentials from the AKS cluster.
@@ -83,5 +82,3 @@ provider "consul" {
   datacenter = hcp_consul_cluster.main.datacenter
   token      = hcp_consul_cluster_root_token.token.secret_id
 }
-
-data "azurerm_subscription" "current" {}
