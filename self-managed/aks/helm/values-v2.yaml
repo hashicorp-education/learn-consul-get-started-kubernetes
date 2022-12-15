@@ -3,7 +3,6 @@ global:
   # The main enabled/disabled setting.
   # If true, servers, clients, Consul DNS and the Consul UI will be enabled.
   enabled: true
-  image: "hashicorp/consul:1.14.0-beta1"
   # The prefix used for all resources created in the Helm chart.
   name: consul
   # The name of the datacenter that the agents should register as.
@@ -11,6 +10,7 @@ global:
   # Enables TLS across the cluster to verify authenticity of the Consul servers and clients.
   tls:
     enabled: true
+    enableAutoEncrypt: true
   # Enables ACLs across the cluster to secure access to data and APIs.
   acls:
     # If true, automatically manage ACL tokens and policies for all Consul components.
@@ -29,23 +29,13 @@ ui:
 # Configures and installs the automatic Consul Connect sidecar injector.
 connectInject:
   enabled: true
-  # TPROXY WILL BE AVAILABLE FOR GA - for now it must be set to false to work
-  transparentProxy:
-    defaultEnabled: false
-  default: true
-  consulNode:
-    meta: "hcp-aks-agentless-node"
-# Configures and installs the Consul controller for managing custom resources.
-controller:
-  enabled: true
+# Configures and installs the Consul API Gateway.
 apiGateway:
   enabled: true
   # Image to use for the api-gateway-controller pods and gateway instances
-  image: "hashicorp/consul-api-gateway:0.4.0"
+  image: "hashicorp/consul-api-gateway:0.5.1"
   # Configuration settings for the GatewayClass
   managedGatewayClass:
     # Defines the type of service created for gateways (e.g. LoadBalancer, ClusterIP, NodePort)
     # NodePort is primarily used for local deployments.
-    serviceType: NodePort
-    # Toggles the gateway ports to be mapped to host ports (used for local deployments)
-    useHostPorts: true
+    serviceType: LoadBalancer

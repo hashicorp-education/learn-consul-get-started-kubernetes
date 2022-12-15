@@ -1,3 +1,10 @@
+# Create a user assigned identity (required for UserAssigned identity in combination with brining our own subnet/nsg/etc)
+resource "azurerm_user_assigned_identity" "identity" {
+  name                = "aks-identity"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
 # Create the AKS cluster.
 resource "azurerm_kubernetes_cluster" "k8" {
   name                    = local.cluster_id
@@ -24,7 +31,7 @@ resource "azurerm_kubernetes_cluster" "k8" {
 
   identity {
     type                      = "UserAssigned"
-    identity_ids              = [azurerm_user_assigned_identity.identity.id]
+    user_assigned_identity_id = azurerm_user_assigned_identity.identity.id
   }
 
   depends_on = [module.network]

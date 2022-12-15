@@ -16,9 +16,3 @@ resource "kubernetes_namespace" "consul" {
     name = "consul"
   }
 }
-
-resource "random_string" "cluster_id" {
-  length  = 6
-  special = false
-  upper   = false
-}

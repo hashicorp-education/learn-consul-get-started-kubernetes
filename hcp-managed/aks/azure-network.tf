@@ -38,38 +38,21 @@ module "network" {
   depends_on = [azurerm_resource_group.rg]
 }
 
-## To be added after Ingress Gateway is created
-# Authorize HTTP ingress to the load balancer.
-#resource "azurerm_network_security_rule" "ingress" {
-#  name                        = "http-ingress"
-#  priority                    = 301
-#  direction                   = "Inbound"
-#  access                      = "Allow"
-#  protocol                    = "Tcp"
-#  source_port_range           = "*"
-#  destination_port_range      = "8080"
-#  source_address_prefix       = "*"
-#  destination_address_prefix  = module.demo_app.load_balancer_ip
-#  resource_group_name         = azurerm_resource_group.rg.name
-#  network_security_group_name = azurerm_network_security_group.nsg.name
-#
-#  depends_on = [module.demo_app]
-#}
-
-## To be added after API Gateway is created
-# Authorize HTTP ingress to the load balancer.
-/* resource "azurerm_network_security_rule" "api-gateway-ingress" {
+## To be added after Consul API Gateway is created
+# Authorize HTTP ingress to the Consul API Gateway load balancer.
+/*
+resource "azurerm_network_security_rule" "ingress" {
   name                        = "api-gw-http-ingress"
   priority                    = 301
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "80"
+  destination_port_range      = "8080"
   source_address_prefix       = "*"
-  destination_address_prefix  = "52.137.88.78/32"
+  #destination_address_prefix  = module.demo_app.load_balancer_ip
+  destination_address_prefix  = "20.112.49.111/32"
   resource_group_name         = azurerm_resource_group.rg.name
   network_security_group_name = azurerm_network_security_group.nsg.name
-
 }
 */

@@ -78,11 +78,11 @@ export CONSUL_HTTP_ADDR=$(terraform output -raw consul_url)
 
 15. Enable API Gateway and upgrade your Consul Helm deployment.
     1.  do this
-    2.  `cp helm/values-v2.yaml modules/aks-client/template/consul.tpl` 
+    2.  `cp helm/values-v2.yaml modules/hcp-aks-client/templates/consul.tpl` 
     3.  `terraform apply`
     4.  `yes`
 
-16. Create API Gateway and respective route resources
+16. Create API Gateway and respective route resources.
 
 ```sh
 kubectl apply --filename api-gw/consul-api-gateway.yaml --namespace consul && \
@@ -90,7 +90,7 @@ kubectl wait --for=condition=ready gateway/api-gateway --namespace consul --time
 kubectl apply --filename api-gw/routes.yaml --namespace consul
 ```
 
-17. Deploy RBAC and ReferenceGrant resources
+17. Deploy RBAC and ReferenceGrant resources.
 
 ```sh
 kubectl apply --filename hashicups/v2/
@@ -106,7 +106,7 @@ kubectl apply --filename hashicups/v2/
 kubectl get svc/api-gateway --namespace consul -o json | jq -r '.status.loadBalancer.ingress[0].ip'
 ```
 
-20.  Visit the following urls in the browser - you will see a connection failure.
+20.  Visit the following urls in the browser - you will experience a connection failure.
     1. [http://your-azure-load-balancer-ip:8080](http://your-azure-load-balancer-ip:8080)
 
 21. Create this file `/terraform/azure-nsg-api-gateway.tf` and put your `EXTERNAL-IP` in the `destination_address_prefix` field.
@@ -130,7 +130,7 @@ resource "azurerm_network_security_rule" "api-gateway-ingress" {
 22. Deploy updated Consul configuration with Terraform to deploy the network security group rule.
 
 ```sh
-terraform -chdir=terraform/ apply --auto-approve
+terraform --auto-approve
 ```
 
 23.  Visit the following urls in the browser - you will see a connection success.
@@ -142,7 +142,7 @@ terraform -chdir=terraform/ apply --auto-approve
 24. do this
 
 - ./install-observability-suite.sh
-- cp helm/consul-values-hcp-v3.yaml terraform/modules/aks-client/template/consul.tpl
+- cp helm/values-v3.yaml modules/hcp-aks-client/templates/consul.tpl
 - kubectl apply -f proxy/proxy-defaults.yaml
 - terraform -chdir=terraform/ apply --auto-approve
 - Check the Consul UI for metrics (Is this possible with HCP?)
@@ -153,6 +153,6 @@ terraform -chdir=terraform/ apply --auto-approve
 - kubectl port-forward svc/nginx --namespace default 8080:80
 - [HashiCups UI](http://localhost:8080/)
 
-25.   Clean up
+1.    Clean up
     1. Destroy Terraform resources
       `terraform destroy`

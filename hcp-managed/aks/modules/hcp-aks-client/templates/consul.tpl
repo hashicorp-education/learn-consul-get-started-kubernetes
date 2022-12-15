@@ -50,12 +50,3 @@ connectInject:
     meta:
       terraform-module: "hcp-aks-client"
 %{ endif ~}
-
-#ingressGateways:
-#  enabled: true
-#  gateways:
-#    - name: ingress-gateway
-#      service:
-#        type: LoadBalancer
-#        ports:
-#        - port: 8080

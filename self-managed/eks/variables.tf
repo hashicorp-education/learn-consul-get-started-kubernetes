@@ -20,7 +20,7 @@ variable "hvn_region" {
 variable "hvn_id" {
   type        = string
   description = "The name of your HCP HVN"
-  default     = "learn-hcp-apigw"
+  default     = "learn-hcp-gs"
 }
 
 variable "hvn_cidr_block" {
@@ -38,7 +38,7 @@ variable "consul_tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.14.1"
+  default     = "v1.14.3"
 }
 
 variable "api_gateway_version" {
