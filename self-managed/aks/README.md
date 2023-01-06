@@ -11,18 +11,18 @@ Install Consul on Kubernetes and quickly explore service mesh features such as s
 1. Clone repo
 2. `cd learn-consul-get-started-kubernetes/self-managed/aks`
 3. Set credential environment variables for AWS
-    1. 
-    ```shell
-    export AWS_ACCESS_KEY_ID="YOUR_AWS_ACCESS_KEY"
-    export AWS_SECRET_ACCESS_KEY="YOUR_AWS_SECRET_KEY"
-    ```
+
+```sh
+az login
+```
+
 4. Run Terraform to create resources (takes 10-15 minutes to complete)
     1. `terraform init`
     2. `terraform apply`
     3. `yes`
 5. Configure terminal to communicate with your EKS cluster
-    1. `aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw kubernetes_cluster_id)` 
-6. Install Consul in your EKS cluster
+    1. `az aks get-credentials --resource-group $(terraform -chdir=terraform/ output -raw azure_rg_name) --name $(terraform -chdir=terraform/  output -raw aks_cluster_name)`
+6. Install Consul in your AKS cluster
 
 ```sh
 helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.2"
@@ -36,7 +36,7 @@ consul-k8s install -config-file=helm/values-v1.yaml
 
 ```sh
 export CONSUL_HTTP_TOKEN=$(kubectl get --namespace consul secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d) && \
-export CONSUL_HTTP_ADDR=https://$(kubectl get services/consul-ui --namespace consul -o jsonpath='{.status.loadBalancer.ingress[0].hostname}') && \
+export CONSUL_HTTP_ADDR=https://$(kubectl get services/consul-ui --namespace consul -o jsonpath='{.status.loadBalancer.ingress[0].ip}') && \
 export CONSUL_HTTP_SSL_VERIFY=false
 ```
 

@@ -9,7 +9,7 @@ Install Consul on Kubernetes and quickly explore service mesh features such as s
 ### kubernetes-gs-deploy
 
 1. Clone repo
-2. `cd learn-consul-get-started-kubernetes/cloud/eks/hcp-managed`
+2. `cd learn-consul-get-started-kubernetes/cloud/hcp-managed/eks`
 3. Set credential environment variables for AWS and HCP
     1. 
     ```shell
