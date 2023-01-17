@@ -38,21 +38,18 @@ module "network" {
   depends_on = [azurerm_resource_group.rg]
 }
 
-## To be added after Consul API Gateway is created
-# Authorize HTTP ingress to the Consul API Gateway load balancer.
-/*
+# Authorize ingress to the Consul API Gateway Load Balancer IP addresses.
+# In a production environment, replace "Internet" with exact public IP addresses
 resource "azurerm_network_security_rule" "ingress" {
-  name                        = "api-gw-http-ingress"
+  name                        = "consul-service-ingress"
   priority                    = 301
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "8080"
+  destination_port_ranges     = ["443","8080"]
   source_address_prefix       = "*"
-  #destination_address_prefix  = module.demo_app.load_balancer_ip
-  destination_address_prefix  = "20.112.49.111/32"
+  destination_address_prefix  = "Internet"
   resource_group_name         = azurerm_resource_group.rg.name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
-*/

@@ -1,0 +1,12 @@
+loki:
+  enabled: true
+  isDefault: true
+  podAnnotations:
+    "consul.hashicorp.com/connect-inject": "false"
+
+promtail:
+  enabled: true
+  config:
+    lokiAddress: http://{{ .Release.Name }}:3100/loki/api/v1/push
+  podAnnotations:
+    "consul.hashicorp.com/connect-inject": "false"

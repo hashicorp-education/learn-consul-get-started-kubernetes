@@ -30,10 +30,18 @@ server:
   enabled: false
 
 connectInject:
+  transparentProxy:
+    defaultEnabled: true
   enabled: true
+  default: true
   metrics:
     defaultEnabled: true
     defaultEnableMerging: true
+%{ if !consul_client_agent ~}
+  consulNode:
+    meta:
+      terraform-module: "hcp-aks-client"
+%{ endif ~}
 
 apiGateway:
   enabled: true

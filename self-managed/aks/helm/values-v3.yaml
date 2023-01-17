@@ -10,7 +10,6 @@ global:
   # Enables TLS across the cluster to verify authenticity of the Consul servers and clients.
   tls:
     enabled: true
-    enableAutoEncrypt: true
   # Enables ACLs across the cluster to secure access to data and APIs.
   acls:
     # If true, automatically manage ACL tokens and policies for all Consul components.
@@ -26,7 +25,7 @@ global:
 server:
   enabled: true
   # The number of server agents to run. This determines the fault tolerance of the cluster.
-  replicas: 1
+  replicas: 3
 # Contains values that configure the Consul UI.
 ui:
   enabled: true
@@ -47,8 +46,6 @@ connectInject:
     # Enables metrics for Consul Connect sidecars.
   metrics:
     defaultEnabled: true
-    # Enables service metrics and sidecar proxy metrics merging into one endpoint.
-    defaultEnableMerging: true
 # Configures and installs the Consul API Gateway.
 apiGateway:
   enabled: true

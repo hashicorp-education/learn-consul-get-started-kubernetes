@@ -17,8 +17,9 @@ global:
 # Configures values that configure the Consul server cluster.
 server:
   enabled: true
+  affinity: null
   # The number of server agents to run. This determines the fault tolerance of the cluster.
-  replicas: 1
+  replicas: 3
 # Contains values that configure the Consul UI.
 ui:
   enabled: true
