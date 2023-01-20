@@ -14,10 +14,6 @@ global:
     caCert:
       secretName: ${cluster_id}-hcp
       secretKey: caCert
-  metrics:
-    enabled: true
-    enableAgentMetrics: true
-    agentMetricsRetentionTime: "1m"
 
 externalServers:
   enabled: true
@@ -28,15 +24,3 @@ externalServers:
 
 server:
   enabled: false
-
-connectInject:
-  enabled: true
-  metrics:
-    defaultEnabled: true
-    defaultEnableMerging: true
-
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:${api_gateway_version}"
-  managedGatewayClass:
-    serviceType: LoadBalancer
