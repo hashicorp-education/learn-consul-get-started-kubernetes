@@ -4,8 +4,8 @@ module "aws_hcp_consul" {
 
   hvn                = hcp_hvn.main
   vpc_id             = module.vpc.vpc_id
-  subnet_ids         = concat(module.vpc.public_subnets, module.vpc.database_subnets)
-  route_table_ids    = concat(module.vpc.public_route_table_ids, module.vpc.database_route_table_ids)
+  subnet_ids         = concat(module.vpc.public_subnets)
+  route_table_ids    = concat(module.vpc.public_route_table_ids)
   security_group_ids = [module.eks.cluster_primary_security_group_id]
 }
 

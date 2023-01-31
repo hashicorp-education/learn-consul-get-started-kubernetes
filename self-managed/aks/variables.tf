@@ -23,7 +23,7 @@ variable "cluster_id" {
 variable "consul_version" {
   type        = string
   description = "The Consul version"
-  default     = "v1.14.3"
+  default     = "v1.14.4"
 }
 
 variable "vnet_cidrs" {
