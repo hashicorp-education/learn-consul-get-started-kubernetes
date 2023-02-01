@@ -1,13 +1,18 @@
 locals {
-  cluster_id = "${var.cluster_id}-${random_string.cluster_id.id}"
-  hvn_id     = "${var.hvn_id}-${random_string.cluster_id.id}"
+  hvn_id     = "${var.hvn_id}-${random_string.suffix.result}"
+  name = "${var.name}-${random_string.suffix.result}"
 }
 
-variable "cluster_id" {
+resource "random_string" "suffix" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
+variable "name" {
+  description = "Tutorial name"
   type        = string
-  description = "The name of your HCP Consul cluster"
-  default     = "hcp-learn"
-  # default = "learn-hcp-apigw"
+  default     = "learn-consul-gs"
 }
 
 variable "vpc_region" {

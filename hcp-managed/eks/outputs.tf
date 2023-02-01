@@ -20,7 +20,7 @@ output "region" {
 }
 
 output "kubernetes_cluster_id" {
-  value = module.eks.cluster_id
+  value       = local.name
 }
 
 output "vpc" {
