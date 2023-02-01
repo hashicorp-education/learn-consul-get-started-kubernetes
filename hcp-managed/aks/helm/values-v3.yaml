@@ -36,7 +36,6 @@ connectInject:
   default: true
   metrics:
     defaultEnabled: true
-    defaultEnableMerging: true
 %{ if !consul_client_agent ~}
   consulNode:
     meta:

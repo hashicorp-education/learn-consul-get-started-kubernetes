@@ -33,7 +33,6 @@ connectInject:
   enabled: true
   metrics:
     defaultEnabled: true
-    defaultEnableMerging: true
 
 apiGateway:
   enabled: true
