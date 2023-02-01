@@ -4,14 +4,17 @@ kind: Service
 metadata:
   name: payments
   namespace: default
-spec:
-  selector:
+  labels:
     app: payments
+spec:
+  type: ClusterIP
   ports:
     - name: http
       protocol: TCP
       port: 8080
       targetPort: 8080
+  selector:
+    app: payments
 ---
 apiVersion: v1
 kind: ServiceAccount
