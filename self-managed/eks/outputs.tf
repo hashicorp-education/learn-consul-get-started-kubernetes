@@ -3,7 +3,7 @@ output "kubernetes_cluster_endpoint" {
 }
 
 output "kubernetes_cluster_id" {
-  value       = local.name
+  value = local.name
 }
 
 output "region" {

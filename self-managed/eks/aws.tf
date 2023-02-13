@@ -25,12 +25,12 @@ module "vpc" {
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/elb"                      = 1
+    "kubernetes.io/role/elb"              = 1
   }
 
   private_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = 1
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -49,8 +49,8 @@ module "eks" {
   cluster_name    = local.name
   cluster_version = "1.24"
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnets
+  vpc_id                         = module.vpc.vpc_id
+  subnet_ids                     = module.vpc.public_subnets
   cluster_endpoint_public_access = true
 
   eks_managed_node_group_defaults = {
@@ -63,9 +63,9 @@ module "eks" {
 
       instance_types = ["t3a.medium"]
 
-      min_size       = 1
-      max_size       = 5
-      desired_size   = 3
+      min_size     = 1
+      max_size     = 5
+      desired_size = 3
     }
   }
 
@@ -98,8 +98,17 @@ module "eks" {
   }
 }
 
-# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
+# Uninstalls consul resources (API Gateway controller, Consul-UI, and AWS ELB, and removes associated AWS resources)
+# on terraform destroy
+resource "null_resource" "kubernetes_consul_resources" {
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete svc/consul-ui --namespace consul && kubectl delete svc/api-gateway --namespace consul"
+  }
+  depends_on = [module.eks]
+}
 
+# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }

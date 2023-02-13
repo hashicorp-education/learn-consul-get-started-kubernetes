@@ -1,6 +1,6 @@
 locals {
-  hvn_id     = "${var.hvn_id}-${random_string.suffix.result}"
-  name = "${var.name}-${random_string.suffix.result}"
+  hvn_id  = "${var.hvn_id}-${random_string.suffix.result}"
+  name    = "${var.name}-${random_string.suffix.result}"
 }
 
 resource "random_string" "suffix" {
@@ -30,7 +30,7 @@ variable "hvn_region" {
 variable "hvn_id" {
   type        = string
   description = "The name of your HCP HVN"
-  default     = "learn-hcp-apigw"
+  default     = "learn-consul-gs"
 }
 
 variable "hvn_cidr_block" {
@@ -48,7 +48,7 @@ variable "consul_tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.14.3"
+  default     = "v1.14.4"
 }
 
 variable "api_gateway_version" {

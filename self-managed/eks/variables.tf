@@ -25,7 +25,7 @@ variable "api_gateway_version" {
 resource "random_string" "suffix" {
   length  = 4
   special = false
-  upper = false
+  upper   = false
 }
 
 locals {

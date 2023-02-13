@@ -24,7 +24,7 @@ variable "hvn_region" {
 variable "hvn_id" {
   type        = string
   description = "the hvn id"
-  default     = "learn-hcp-gs"
+  default     = "learn-consul-gs"
 }
 
 variable "hvn_cidr_block" {
@@ -36,7 +36,7 @@ variable "hvn_cidr_block" {
 variable "cluster_id" {
   type        = string
   description = "the cluster id is unique. All other unique values will be derived from this (resource group, vnet etc)"
-  default     = "learn-hcp-gs"
+  default     = "learn-consul-gs"
 }
 
 variable "tier" {
@@ -48,7 +48,7 @@ variable "tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.14.3"
+  default     = "v1.14.4"
 }
 
 variable "vnet_cidrs" {
