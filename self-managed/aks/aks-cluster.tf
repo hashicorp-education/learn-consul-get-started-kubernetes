@@ -8,6 +8,8 @@ resource "azurerm_user_assigned_identity" "identity" {
 # Create the AKS cluster.
 resource "azurerm_kubernetes_cluster" "k8" {
   name                    = local.cluster_id
+  kubernetes_version      = "1.24"
+
   dns_prefix              = local.cluster_id
   location                = azurerm_resource_group.rg.location
   private_cluster_enabled = false

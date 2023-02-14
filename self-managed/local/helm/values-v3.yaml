@@ -27,7 +27,8 @@ global:
 server:
   enabled: true
   # The number of server agents to run. This determines the fault tolerance of the cluster.
-  replicas: 1
+  replicas: 3
+  affinity: null
 # Contains values that configure the Consul UI.
 ui:
   enabled: true
@@ -48,15 +49,3 @@ connectInject:
     # Enables metrics for Consul Connect sidecars.
   metrics:
     defaultEnabled: true
-# Configures and installs the Consul API Gateway.
-apiGateway:
-  enabled: true
-  # Image to use for the api-gateway-controller pods and gateway instances
-  image: "hashicorp/consul-api-gateway:0.5.1"
-  # Configuration settings for the GatewayClass
-  managedGatewayClass:
-    # Defines the type of service created for gateways (e.g. LoadBalancer, ClusterIP, NodePort)
-    # NodePort is primarily used for local deployments.
-    serviceType: NodePort
-    # Toggles the gateway ports to be mapped to host ports (used for local deployments)
-    useHostPorts: true

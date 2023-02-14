@@ -20,8 +20,9 @@ global:
 server:
   enabled: true
   # The number of server agents to run. This determines the fault tolerance of the cluster.
-  replicas: 1
+  replicas: 3
 # Contains values that configure the Consul UI.
+  affinity: null
 ui:
   enabled: true
   # Registers a Kubernetes Service for the Consul UI as a NodePort.
@@ -30,3 +31,4 @@ ui:
 # Configures and installs the automatic Consul Connect sidecar injector.
 connectInject:
   enabled: true
+  replicas: 3

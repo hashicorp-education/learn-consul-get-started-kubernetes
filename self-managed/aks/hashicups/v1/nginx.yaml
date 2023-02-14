@@ -103,6 +103,8 @@ spec:
         service: nginx
         app: nginx
       annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
     spec:
       serviceAccountName: nginx
