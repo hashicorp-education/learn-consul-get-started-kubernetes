@@ -1,0 +1,18 @@
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+# The Gateway is the main infrastructure resource that links API gateway components.
+kind: Gateway
+metadata:
+  name: api-gateway
+  namespace: consul
+spec:
+  gatewayClassName: consul-api-gateway
+  # Configures the listener that is bound to the gateway's address.
+  listeners:
+    # Defines the listener protocol (HTTP, HTTPS, or TCP)
+  - protocol: HTTP
+    port: 8080
+    name: http
+    allowedRoutes:
+      namespaces:
+        from: Same
