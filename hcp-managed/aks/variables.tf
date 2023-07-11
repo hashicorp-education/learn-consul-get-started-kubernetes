@@ -48,7 +48,7 @@ variable "tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.14.4"
+  default     = "v1.16.0"
 }
 
 variable "vnet_cidrs" {

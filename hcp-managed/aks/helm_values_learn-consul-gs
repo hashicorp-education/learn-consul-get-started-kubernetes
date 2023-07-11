@@ -1,30 +1,23 @@
 global:
   enabled: false
   name: consul
-  datacenter: ${datacenter}
-  image: "hashicorp/consul-enterprise:${consul_version}-ent"
+  datacenter: learn-consul-gs
+  image: "hashicorp/consul-enterprise:1.16.0-ent"
   acls:
     manageSystemACLs: true
     bootstrapToken:
-      secretName: ${cluster_id}-hcp
+      secretName: learn-consul-gs-hcp
       secretKey: bootstrapToken
   tls:
     enabled: true
-    enableAutoEncrypt: true
-    caCert:
-      secretName: ${cluster_id}-hcp
-      secretKey: caCert
-  metrics:
-    enabled: true
-    enableAgentMetrics: true
-    agentMetricsRetentionTime: "1m"
+
 
 externalServers:
   enabled: true
-  hosts: ${consul_hosts}
+  hosts: ["servers-public-consul-84561beb.cd0cdfb9.z1.hashicorp.cloud"]
   httpsPort: 443
   useSystemRoots: true
-  k8sAuthMethodHost: ${k8s_api_endpoint}
+  k8sAuthMethodHost: https://learn-consul-gs-lktfn84c.hcp.westus2.azmk8s.io:443
 
 server:
   enabled: false
@@ -34,13 +27,9 @@ connectInject:
     defaultEnabled: true
   enabled: true
   default: true
-  metrics:
-    defaultEnabled: true
-%{ if !consul_client_agent ~}
   consulNode:
     meta:
       terraform-module: "hcp-aks-client"
-%{ endif ~}
 
   apiGateway:
     managedGatewayClass:

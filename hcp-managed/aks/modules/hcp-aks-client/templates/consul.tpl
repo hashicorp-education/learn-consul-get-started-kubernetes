@@ -10,25 +10,14 @@ global:
       secretKey: bootstrapToken
   tls:
     enabled: true
-
-%{ if consul_client_agent ~}
     enableAutoEncrypt: true
     caCert:
       secretName: ${cluster_id}-hcp
       secretKey: caCert
-  gossipEncryption:
-    secretName: ${cluster_id}-hcp
-    secretKey: gossipEncryptionKey
-
-client:
-  enabled: true
-  join: ${consul_hosts}
-  nodeMeta:
-    terraform-module: "hcp-aks-client"
-
-controller:
-  enabled: true
-%{ endif ~}
+  metrics:
+    enabled: true
+    enableAgentMetrics: true
+    agentMetricsRetentionTime: "1m"
 
 externalServers:
   enabled: true
@@ -45,8 +34,14 @@ connectInject:
     defaultEnabled: true
   enabled: true
   default: true
+  metrics:
+    defaultEnabled: true
 %{ if !consul_client_agent ~}
   consulNode:
     meta:
       terraform-module: "hcp-aks-client"
 %{ endif ~}
+
+  apiGateway:
+    managedGatewayClass:
+      serviceType: LoadBalancer

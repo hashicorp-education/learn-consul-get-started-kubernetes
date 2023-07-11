@@ -33,9 +33,6 @@ connectInject:
   enabled: true
   metrics:
     defaultEnabled: true
-
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:${api_gateway_version}"
-  managedGatewayClass:
-    serviceType: LoadBalancer
+  apiGateway:
+    managedGatewayClass:
+      serviceType: LoadBalancer

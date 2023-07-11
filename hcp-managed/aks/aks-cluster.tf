@@ -8,7 +8,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 # Create the AKS cluster.
 resource "azurerm_kubernetes_cluster" "k8s" {
   name                    = var.cluster_id
-  kubernetes_version      = "1.24"
+  kubernetes_version      = "1.25.6"
   
   dns_prefix              = var.cluster_id
   location                = azurerm_resource_group.rg.location
@@ -54,5 +54,5 @@ module "aks_consul_client" {
   # The AKS node group will fail to create if the clients are
   # created at the same time. This forces the client to wait until
   # the node group is successfully created.
-  depends_on = [azurerm_kubernetes_cluster.k8, kubernetes_namespace.consul]
+  depends_on = [azurerm_kubernetes_cluster.k8s, kubernetes_namespace.consul]
 }

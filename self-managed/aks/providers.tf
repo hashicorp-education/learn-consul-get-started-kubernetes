@@ -5,10 +5,6 @@ terraform {
       version               = "~> 2.65"
       configuration_aliases = [azurerm.azure]
     }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 2.14"
-    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.4.1"
@@ -68,5 +64,3 @@ provider "kubectl" {
 provider "azurerm" {
   features {}
 }
-
-provider "azuread" {}
