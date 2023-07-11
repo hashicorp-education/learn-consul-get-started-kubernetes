@@ -37,32 +37,32 @@ terraform {
 # Configure providers to use the credentials from the AKS cluster.
 provider "helm" {
   kubernetes {
-    client_certificate     = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.client_certificate)
-    client_key             = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.client_key)
-    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.cluster_ca_certificate)
-    host                   = azurerm_kubernetes_cluster.k8.kube_config.0.host
-    password               = azurerm_kubernetes_cluster.k8.kube_config.0.password
-    username               = azurerm_kubernetes_cluster.k8.kube_config.0.username
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)
+    host                   = azurerm_kubernetes_cluster.k8s.kube_config.0.host
+    password               = azurerm_kubernetes_cluster.k8s.kube_config.0.password
+    username               = azurerm_kubernetes_cluster.k8s.kube_config.0.username
   }
 }
 
 provider "kubernetes" {
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.cluster_ca_certificate)
-  host                   = azurerm_kubernetes_cluster.k8.kube_config.0.host
-  password               = azurerm_kubernetes_cluster.k8.kube_config.0.password
-  username               = azurerm_kubernetes_cluster.k8.kube_config.0.username
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)
+  host                   = azurerm_kubernetes_cluster.k8s.kube_config.0.host
+  password               = azurerm_kubernetes_cluster.k8s.kube_config.0.password
+  username               = azurerm_kubernetes_cluster.k8s.kube_config.0.username
 }
 
 provider "kubectl" {
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8.kube_config.0.cluster_ca_certificate)
-  host                   = azurerm_kubernetes_cluster.k8.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)
+  host                   = azurerm_kubernetes_cluster.k8s.kube_config.0.host
   load_config_file       = false
-  password               = azurerm_kubernetes_cluster.k8.kube_config.0.password
-  username               = azurerm_kubernetes_cluster.k8.kube_config.0.username
+  password               = azurerm_kubernetes_cluster.k8s.kube_config.0.password
+  username               = azurerm_kubernetes_cluster.k8s.kube_config.0.username
 }
 
 provider "azurerm" {
