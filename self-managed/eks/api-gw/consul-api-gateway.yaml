@@ -1,5 +1,5 @@
 ---
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: gateway.networking.k8s.io/v1beta1
 # The Gateway is the main infrastructure resource that links API gateway components.
 kind: Gateway
 metadata:
