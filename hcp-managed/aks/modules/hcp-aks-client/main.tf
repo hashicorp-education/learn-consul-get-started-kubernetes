@@ -19,7 +19,6 @@ locals {
     datacenter          = var.datacenter
     k8s_api_endpoint    = var.k8s_api_endpoint
     consul_client_agent = local.install_consul_client_agent
-    api_gateway_version = var.api_gateway_version
   })
 
   consul_secrets_common = {

@@ -3,7 +3,7 @@ output "azure_rg_name" {
 }
 
 output "aks_cluster_name" {
-  value = azurerm_kubernetes_cluster.k8.name
+  value = azurerm_kubernetes_cluster.k8s.name
 }
 
 output "consul_root_token" {
@@ -16,7 +16,7 @@ output "consul_url" {
 }
 
 output "kube_config_raw" {
-  value     = azurerm_kubernetes_cluster.k8.kube_config_raw
+  value     = azurerm_kubernetes_cluster.k8s.kube_config_raw
   sensitive = true
 }
 

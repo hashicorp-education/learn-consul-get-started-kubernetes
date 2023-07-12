@@ -6,9 +6,9 @@ resource "azurerm_user_assigned_identity" "identity" {
 }
 
 # Create the AKS cluster.
-resource "azurerm_kubernetes_cluster" "k8" {
+resource "azurerm_kubernetes_cluster" "k8s" {
   name                    = var.cluster_id
-  kubernetes_version      = "1.24"
+  kubernetes_version      = "1.25.6"
   
   dns_prefix              = var.cluster_id
   location                = azurerm_resource_group.rg.location
@@ -47,12 +47,12 @@ module "aks_consul_client" {
   # strip out url scheme from the public url
   consul_hosts       = tolist([substr(hcp_consul_cluster.main.consul_public_endpoint_url, 8, -1)])
   consul_version     = hcp_consul_cluster.main.consul_version
-  k8s_api_endpoint   = azurerm_kubernetes_cluster.k8.kube_config.0.host
+  k8s_api_endpoint   = azurerm_kubernetes_cluster.k8s.kube_config.0.host
   boostrap_acl_token = hcp_consul_cluster_root_token.token.secret_id
   datacenter         = hcp_consul_cluster.main.datacenter
 
   # The AKS node group will fail to create if the clients are
   # created at the same time. This forces the client to wait until
   # the node group is successfully created.
-  depends_on = [azurerm_kubernetes_cluster.k8, kubernetes_namespace.consul]
+  depends_on = [azurerm_kubernetes_cluster.k8s, kubernetes_namespace.consul]
 }
