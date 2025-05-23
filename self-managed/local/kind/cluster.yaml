@@ -5,7 +5,7 @@ nodes:
   image: kindest/node:v1.24.0
   extraPortMappings:
   - containerPort: 443
-    hostPort: 443
+    hostPort: 9443
     protocol: TCP
   - containerPort: 8501
     hostPort: 8501
