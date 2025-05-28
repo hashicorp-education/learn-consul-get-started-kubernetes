@@ -4,14 +4,17 @@ kind: Service
 metadata:
   name: product-api
   namespace: default
-spec:
-  selector:
+  labels:
     app: product-api
+spec:
+  type: ClusterIP
   ports:
     - name: http
       protocol: TCP
       port: 9090
       targetPort: 9090
+  selector:
+    app: product-api
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -36,7 +39,7 @@ metadata:
 data:
   config: |
     {
-      "db_connection": "host=localhost port=5432 user=postgres password=password dbname=products sslmode=disable",
+      "db_connection": "host=product-api-db port=5432 user=postgres password=password dbname=products sslmode=disable",
       "bind_address": ":9090",
       "metrics_address": ":9103"
     }
@@ -59,7 +62,6 @@ spec:
         app: product-api
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "product-api-db:5432"
     spec:
       serviceAccountName: product-api
       volumes:
@@ -71,7 +73,7 @@ spec:
                 path: conf.json
       containers:
         - name: product-api
-          image: hashicorpdemoapp/product-api:v0.0.20
+          image: hashicorpdemoapp/product-api:v0.0.22
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9090
