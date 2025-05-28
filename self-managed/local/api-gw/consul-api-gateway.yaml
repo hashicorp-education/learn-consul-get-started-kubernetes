@@ -6,17 +6,13 @@ metadata:
   name: api-gateway
   namespace: consul
 spec:
-  gatewayClassName: consul-api-gateway
+  gatewayClassName: consul
   # Configures the listener that is bound to the gateway's address.
   listeners:
     # Defines the listener protocol (HTTP, HTTPS, or TCP)
-  - protocol: HTTPS
-    port: 8443
-    name: https
+  - protocol: HTTP
+    port: 8080
+    name: http
     allowedRoutes:
       namespaces:
         from: Same
-    tls:
-      # Defines the certificate to use for the HTTPS listener.
-      certificateRefs:
-        - name: consul-server-cert
