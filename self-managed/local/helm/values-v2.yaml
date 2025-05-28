@@ -49,8 +49,13 @@ connectInject:
   metrics:
     defaultEnabled: true
   apiGateway:
+    enabled: true
+    # Image to use for the api-gateway-controller pods and gateway instances
+    image: "hashicorp/consul-api-gateway:0.5.1"
     # Configuration settings for the GatewayClass
     managedGatewayClass:
       # Defines the type of service created for gateways (e.g. LoadBalancer, ClusterIP, NodePort)
       # NodePort is primarily used for local deployments.
-      serviceType: LoadBalancer
+      serviceType: NodePort
+      # Toggles the gateway ports to be mapped to host ports (used for local deployments)
+      useHostPorts: true
