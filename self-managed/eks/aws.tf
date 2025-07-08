@@ -47,7 +47,7 @@ module "eks" {
   version = "19.5.1"
 
   cluster_name    = local.name
-  cluster_version = "1.25"
+  cluster_version = "1.32"
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.public_subnets
@@ -127,7 +127,7 @@ module "irsa-ebs-csi" {
 resource "aws_eks_addon" "ebs-csi" {
   cluster_name             = module.eks.cluster_name
   addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.20.0-eksbuild.1"
+  addon_version            = "v1.43.0-eksbuild.1"
   service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
   tags = {
     "eks_addon" = "ebs-csi"
